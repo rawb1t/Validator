@@ -41,19 +41,19 @@ $_POST['bio'] = "Hello, I am John.
 
 Let's validate this:
 ```PHP
-$name = Validator\Value::post( 'name' )->validate(['maxLength' => 100]);
-$username = Validator\Value::post( 'username' )->validate(['alphanumeric']);
-$birthday = Validator\Value::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
-$email = Validator\Value::post( 'email' )->validate(['email']);
-$password = Validator\Value::post( 'password' )->validate(['minLength' => 8]);
-$gender = Validator\Value::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
-$accept_tos = Validator\Value::post( 'accept_tos' )->validate(['bool']);
-$pies = Validator\Value::post( 'pies' )->validate(['inArray' => 'Cream']);
-$pies = Validator\Value::post( 'drink' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
-$captcha = Validator\Value::post( 'captcha' )->validate(['number', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
-$bio = Validator\Value::post( 'bio' );
+$name = Validator\In::post( 'name' )->validate(['maxLength' => 100]);
+$username = Validator\In::post( 'username' )->validate(['alphanumeric']);
+$birthday = Validator\In::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
+$email = Validator\In::post( 'email' )->validate(['email']);
+$password = Validator\In::post( 'password' )->validate(['minLength' => 8]);
+$gender = Validator\In::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
+$accept_tos = Validator\In::post( 'accept_tos' )->validate(['bool']);
+$pies = Validator\In::post( 'pies' )->validate(['inArray' => 'Cream']);
+$pies = Validator\In::post( 'drink' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
+$captcha = Validator\In::post( 'captcha' )->validate(['number', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
+$bio = Validator\In::post( 'bio' );
 ```
-Hint: Setting the second parameter of the validate() function _true_ an exception will be thrown if an input is invalid.
+Hint: Setting the second parameter of the validate() function _true_ an exception will be thrown if an input is invalid. By setting it _false_ exceptions can also be deactivated for single validations;
 
 How to check what's valid and what's not?
 ```PHP
@@ -89,9 +89,11 @@ $username->sanitize('lowercase', 'alphanumericOnly')->validate(['alphanumeric'])
 $bio->sanitize('stripTags', function( $val ) { return substr( $val, 0, 30 ); }, 'break' );
 ```
 
-Let's say all inputs have to be required fields:
+Let's say all inputs have to be required fields, every field should be trimmed and unneccesary whitespaces should be removed and an exception should be thrown if an input is invalid:
 ```PHP
 Validator\GlobalSetup::setValidate(['required']);
+Validator\GlobalSetup::setSanitize('trim', 'stripMultipleWhitespaces');
+Validator\GlobalSetup::alwaysThrow(true);
 ```
 
 ... except for birthday:
