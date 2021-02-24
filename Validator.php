@@ -8,7 +8,7 @@
  */
 namespace Validator;
 
-class Value
+class In
 {
 	public static function val( $name, $val = null ):Validator
 	{
