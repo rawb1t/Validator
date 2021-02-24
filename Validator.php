@@ -48,8 +48,14 @@ class Value
 
 class GlobalSetup
 {
+	protected static $use_exceptions = false;
 	protected static $s_flags = [];
 	protected static $v_flags = [];
+
+	public static function alwaysThrow( bool $use_exceptions ):void
+	{
+		self::$use_exceptions = $use_exceptions;
+	}
 
 	public static function setSanitize( ...$s_flags ):void
 	{
@@ -228,9 +234,15 @@ class Validator extends GlobalValues
 		return $this;
 	}
 
-	public function validate( ?array $validation_flags = null ):Validator
+	public function validate( ?array $validation_flags = null, ?bool $throw = null ):Validator
 	{
 		$is_valid = true;
+		$use_exceptions = parent::$use_exceptions;
+
+		if( !is_null( $throw ) )
+		{
+			$use_exceptions = $throw;
+		}
 
 		if( empty( parent::$v_flags ) &&
 			empty( $this->validation_flags ) &&
@@ -250,6 +262,8 @@ class Validator extends GlobalValues
 
 		$validation_flags = $this->fix_validation_flags( $validation_flags );
 
+		$error = null;
+
 		foreach( $validation_flags as $flag => $f )
 		{
 			if( is_callable( $f ) && !is_string( $f ) )
@@ -258,7 +272,7 @@ class Validator extends GlobalValues
 
 				if( !$is_valid )
 				{
-					$this->errors[] = "custom-{$flag}";
+					$error = "custom-{$flag}";
 					break;
 				}
 			}
@@ -272,7 +286,7 @@ class Validator extends GlobalValues
 
 					if( !$is_valid )
 					{
-						$this->errors[] = strtolower( $flag );
+						$error = strtolower( $flag );
 						break;
 					}
 				}
@@ -287,11 +301,21 @@ class Validator extends GlobalValues
 
 					if( !$is_valid )
 					{
-						$this->errors[] = strtolower( $f );
+						$error = strtolower( $f );
 						break;
 					}
 				}
 			}
+		}
+
+		if( !\is_null( $error ) )
+		{
+			$this->errors[] = $error;
+		}
+
+		if( !$is_valid && $use_exceptions )
+		{
+			throw new InputException( $error, $this->name, $this->val );
 		}
 
 		if( $is_valid )
@@ -1453,5 +1477,31 @@ class ValidationException extends \Exception
 	public function __construct( $e )
 	{
 		parent::__construct( $e );
+	}
+}
+
+class InputException extends \Exception
+{
+	private $error;
+	private $field;
+	private $value;
+
+	public function __construct( $error, $field, $value )
+	{
+		parent::__construct( "Field '{$field}' has an invalid value ('{$value}'). Error: {$error}" );
+
+		$this->error = $error;
+		$this->field = $field;
+		$this->value = $value;
+	}
+
+	public function getError()
+	{
+		return $this->error;
+	}
+
+	public function getField()
+	{
+		return $this->field;
 	}
 }
