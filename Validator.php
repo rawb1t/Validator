@@ -562,7 +562,7 @@ class Validator extends GlobalValues
 		{
 			for( $i = 0; $i < count( $this->val ); $i++ )
 			{
-				$this->val[$i] = nl2br( $this->val[$i], true );
+				$this->val[$i] = nl2br( $this->val[$i], false );
 			}
 		}
 		else
@@ -746,17 +746,43 @@ class Validator extends GlobalValues
 		return strlen( strval( $this->val ) ) > 0;
 	}
 
-	private function v_minLength( int $length ):bool
+	private function v_minLength( int $min ):bool
 	{
-		return $this->v_min( $length, false );
+		if( \is_int( $min ) )
+		{
+			$min = intval( $min );
+		}
+		elseif( $min === false )
+		{
+			return true;
+		}
+		else
+		{
+			throw new ValidationException('Illegal value for min flag.');
+		}
+
+		return strlen( strval( $this->val ) ) >= $min;
 	}
 
-	private function v_maxLength( int $length ):bool
+	private function v_maxLength( int $max ):bool
 	{
-		return $this->v_max( $length, false );
+		if( \is_int( $max ) )
+		{
+			$max = intval( $max );
+		}
+		elseif( $max === false )
+		{
+			return true;
+		}
+		else
+		{
+			throw new ValidationException('Illegal value for min flag.');
+		}
+
+		return strlen( strval( $this->val ) ) <= $max;
 	}
 
-	private function v_min( $min, bool $useNumbers = true ):bool
+	private function v_min( $min ):bool
 	{
 		if( \is_int( $min ) )
 		{
@@ -775,7 +801,7 @@ class Validator extends GlobalValues
 			throw new ValidationException('Illegal value for min flag.');
 		}
 
-		if( is_numeric( $this->val ) && $useNumbers )
+		if( is_numeric( $this->val ) )
 		{
 			if( ((float) $this->val != (int) $this->val) )
 			{
@@ -786,10 +812,6 @@ class Validator extends GlobalValues
 				return intval( $this->val ) >= $min;
 			}
 		}
-		elseif( \is_string( $this->val ) )
-		{
-			return strlen( strval( $this->val ) ) >= $min;
-		}
 		elseif( \is_array( $this->val ) )
 		{
 			return count( $this->val ) >= $min;
@@ -798,7 +820,7 @@ class Validator extends GlobalValues
 		return false;
 	}
 
-	private function v_max( $max, bool $useNumbers = true ):bool
+	private function v_max( $max ):bool
 	{
 		if( \is_int( $max ) )
 		{
@@ -817,7 +839,7 @@ class Validator extends GlobalValues
 			throw new ValidationException('Illegal value for max flag.');
 		}
 
-		if( is_numeric( $this->val ) && $useNumbers )
+		if( is_numeric( $this->val ) )
 		{
 			if( ((float) $this->val != (int) $this->val) )
 			{
@@ -827,10 +849,6 @@ class Validator extends GlobalValues
 			{
 				return intval( $this->val ) <= $max;
 			}
-		}
-		elseif( \is_string( $this->val ) )
-		{
-			return strlen( strval( $this->val ) ) <= $max;
 		}
 		elseif( \is_array( $this->val ) )
 		{
@@ -1054,7 +1072,7 @@ class Validator extends GlobalValues
 		return boolval( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) ) == true;
 	}
 
-	private function v_numbers( bool $active ):bool
+	private function v_number( bool $active ):bool
 	{
 		if( !$active )
 		{
