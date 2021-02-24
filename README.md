@@ -45,7 +45,7 @@ $name = Validator\Value::post( 'name' )->validate(['limit' => 100]);
 $username = Validator\Value::post( 'username' )->validate(['alphanumeric']);
 $birthday = Validator\Value::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
 $email = Validator\Value::post( 'email' )->validate(['email']);
-$password = Validator\Value::post( 'password' )->validate(['min' => 8]);
+$password = Validator\Value::post( 'password' )->validate(['minLength' => 8]);
 $gender = Validator\Value::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
 $accept_tos = Validator\Value::post( 'accept_tos' )->validate(['bool']);
 $pies = Validator\Value::post( 'pies' )->validate(['inArray' => 'Cream']);
