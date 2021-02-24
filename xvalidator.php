@@ -6,7 +6,7 @@
  * Validate and sanitize user input and other variables.
  * 
  */
-namespace XValidator;
+namespace Validator;
 
 class From
 {
@@ -1482,7 +1482,18 @@ class Validator extends GlobalValues
 		}
 		elseif( \is_array( $val ) && \is_array( $this->val ) )
 		{
-			return $this->v_equal( $val );
+			$valid = false;
+
+			foreach( $this->val as $v )
+			{
+				if( in_array( $v, $val ) )
+				{
+					$valid = true;
+					break;
+				}
+			}
+
+			return $valid;
 		}
 		elseif( $val === false )
 		{
@@ -1518,7 +1529,18 @@ class Validator extends GlobalValues
 		}
 		elseif( \is_array( $val ) && \is_array( $this->val ) )
 		{
-			return $this->v_unequal( $val );
+			$valid = false;
+
+			foreach( $this->val as $v )
+			{
+				if( !in_array( $v, $val ) )
+				{
+					$valid = true;
+					break;
+				}
+			}
+
+			return $valid;
 		}
 		elseif( $val === false )
 		{
