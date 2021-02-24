@@ -96,7 +96,7 @@ $username->sanitize('lowercase', 'alphanumericOnly')->validate(['alphanumericOnl
 $bio->sanitize('stripTags', function( $val ) { return substr( $val, 0, 30 ); }, 'break' );
 ```
 
-Let's say all inputs have to be required fields, every field should be trimmed and unneccesary whitespaces should be removed and an exception should be thrown if an input is invalid:
+Let's say all inputs have to be required fields, every field should be trimmed and unnecessary whitespaces should be removed and an exception should be thrown if an input is invalid:
 ```PHP
 GlobalSetup::setValidate(['required']);
 GlobalSetup::setSanitize('trim', 'stripMultipleWhitespaces');
