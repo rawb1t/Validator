@@ -41,7 +41,7 @@ $_POST['bio'] = "Hello, I am John.
 
 Let's validate this:
 ```PHP
-$name = Validator\Value::post( 'name' )->validate(['limit' => 100]);
+$name = Validator\Value::post( 'name' )->validate(['maxLength' => 100]);
 $username = Validator\Value::post( 'username' )->validate(['alphanumeric']);
 $birthday = Validator\Value::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
 $email = Validator\Value::post( 'email' )->validate(['email']);
@@ -53,6 +53,7 @@ $pies = Validator\Value::post( 'drink' )->validate(['equal' => ['Coke', 'Water',
 $captcha = Validator\Value::post( 'captcha' )->validate(['number', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
 $bio = Validator\Value::post( 'bio' );
 ```
+Hint: Setting the second parameter of the validate() function _true_ an exception will be thrown if an input is invalid.
 
 How to check what's valid and what's not?
 ```PHP
@@ -65,6 +66,7 @@ What other informations does Validator provide?
 $name->isEmpty();     // Returns true, if there's no value
 $name->getLength();   // Returns the length of a value as an Integer
 $name->getErrors();   // Get a list of errors that occured due to the validation
+$name->hasError('maxLength');   // Checks of the maxLength validator throw an Error
 ```
 
 How to get the value?
