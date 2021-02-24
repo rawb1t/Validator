@@ -105,7 +105,7 @@ GlobalSetup::alwaysThrow(true);
 
 ... except for birthday:
 ```PHP
-$birthday = From::post( 'birthday' )->validate(['required' => false, 'date' => 'mm\/dd\/yyyy']);
+$birthday = From::post( 'birthday' )->sanitize()->validate(['required' => false, 'date' => 'mm\/dd\/yyyy']);
 ```
 
 I want to know which values are valid and which are invalid:
