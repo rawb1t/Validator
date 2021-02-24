@@ -49,7 +49,7 @@ use Validator\From;
 $captcha_result = 15;
 
 $name = From::post( 'name' )->validate(['maxLength' => 100]);
-$username = From::post( 'username' )->validate(['alphanumeric']);
+$username = From::post( 'username' )->validate(['alphanumericOnly']);
 $birthday = From::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
 $email = From::post( 'email' )->validate(['email']);
 $password = From::post( 'password' )->validate(['minLength' => 8, 'mustContainEverything']);
@@ -90,7 +90,7 @@ Let's sanitize the values first:
 $name->sanitize('capitalizeAll')->validate(['maxLength' => 100]);
 
 // Username should always be lowercase and everything but alphanumeric chars should be stripped
-$username->sanitize('lowercase', 'alphanumericOnly')->validate(['alphanumeric']);
+$username->sanitize('lowercase', 'alphanumericOnly')->validate(['alphanumericOnly']);
 
 // No html in bio allowed, cut after 30 chars but add line <br> linebreaks
 $bio->sanitize('stripTags', function( $val ) { return substr( $val, 0, 30 ); }, 'break' );
