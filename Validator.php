@@ -377,7 +377,7 @@ class Validator extends GlobalValues
 		}
 	}
 
-	private function s_numbersOnly():void
+	private function s_numberOnly():void
 	{
 		if( \is_array( $this->val ) )
 		{
@@ -392,7 +392,7 @@ class Validator extends GlobalValues
 		}		
 	}
 
-	private function s_alphaOnly():void
+	private function s_letterOnly():void
 	{
 		if( \is_array( $this->val ) )
 		{
@@ -422,7 +422,7 @@ class Validator extends GlobalValues
 		}
 	}
 
-	private function s_specialcharsOnly():void
+	private function s_specialcharOnly():void
 	{
 		if( \is_array( $this->val ) )
 		{
@@ -1111,6 +1111,11 @@ class Validator extends GlobalValues
 
 		$pattern = $this->translate_date_pattern( $pattern );
 
+		if( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) === false )
+		{
+			throw new ValidationException('Invalid regex');
+		}
+
 		if( \is_array( $this->val ) )
 		{
 			$valid = true;
@@ -1154,6 +1159,11 @@ class Validator extends GlobalValues
 
 		$pattern = $this->translate_time_pattern( $pattern );
 
+		if( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) === false )
+		{
+			throw new ValidationException('Invalid regex');
+		}
+
 		if( \is_array( $this->val ) )
 		{
 			$valid = true;
@@ -1173,7 +1183,7 @@ class Validator extends GlobalValues
 		return boolval( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) ) == true;
 	}
 
-	private function v_number( bool $active ):bool
+	private function v_numberOnly( bool $active ):bool
 	{
 		if( empty( $this->val ) )
 		{
@@ -1191,7 +1201,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( boolval( preg_match( "/\D+/", strval( $this->val ) ) ) )
+				if( preg_match( "/\D+/", strval( $this->val ) ) == 1 )
 				{
 					$valid = false;
 					break;
@@ -1201,10 +1211,10 @@ class Validator extends GlobalValues
 			return $valid;
 		}
 
-		return boolval( preg_match( "/\D+/", strval( $this->val ) ) ) == false;
+		return preg_match( "/\D+/", strval( $this->val ) ) == 0;
 	}
 
-	private function v_text( bool $active ):bool
+	private function v_letterOnly( bool $active ):bool
 	{
 		if( empty( $this->val ) )
 		{
@@ -1222,7 +1232,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( boolval( preg_match( "/([^a-zA-Z]+)/", strval( $this->val ) ) ) )
+				if( preg_match( "/([^a-zA-Z]+)/", strval( $this->val ) ) == 1 )
 				{
 					$valid = false;
 					break;
@@ -1232,10 +1242,10 @@ class Validator extends GlobalValues
 			return $valid;
 		}
 
-		return boolval( preg_match( "/([^a-zA-Z]+)/", strval( $this->val ) ) ) == false;
+		return preg_match( "/([^a-zA-Z]+)/", strval( $this->val ) ) == 0;
 	}
 
-	private function v_alphanumeric( bool $active ):bool
+	private function v_alphanumericOnly( bool $active ):bool
 	{
 		if( empty( $this->val ) )
 		{
@@ -1253,7 +1263,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( boolval( preg_match( "/([^a-zA-Z0-9]+)/", strval( $this->val ) ) ) )
+				if( preg_match( "/([^a-zA-Z0-9]+)/", strval( $this->val ) ) == 1 )
 				{
 					$valid = false;
 					break;
@@ -1263,10 +1273,10 @@ class Validator extends GlobalValues
 			return $valid;
 		}
 
-		return boolval( preg_match( "/([^a-zA-Z0-9]+)/", strval( $this->val ) ) ) == false;
+		return preg_match( "/([^a-zA-Z0-9]+)/", strval( $this->val ) ) == 0;
 	}
 
-	private function v_specialchars( bool $active ):bool
+	private function v_specialcharOnly( bool $active ):bool
 	{
 		if( empty( $this->val ) )
 		{
@@ -1284,7 +1294,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( boolval( preg_match( "/([a-zA-Z0-9]+)/", strval( $this->val ) ) ) )
+				if( preg_match( "/([a-zA-Z0-9]+)/", strval( $this->val ) ) == 1 )
 				{
 					$valid = false;
 					break;
@@ -1294,7 +1304,139 @@ class Validator extends GlobalValues
 			return $valid;
 		}
 
-		return boolval( preg_match( "/([a-zA-Z0-9]+)/", strval( $this->val ) ) ) == false;
+		return preg_match( "/([a-zA-Z0-9]+)/", strval( $this->val ) ) == 0;
+	}
+
+	private function v_mustContainUppercase( bool $active ):bool
+	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
+		if( !$active )
+		{
+			return true;
+		}
+
+		if( \is_array( $this->val ) )
+		{
+			$valid = true;
+
+			foreach( $this->val as $v )
+			{
+				if( preg_match( "@[A-Z]@", strval( $this->val ) ) == 0 )
+				{
+					$valid = false;
+					break;
+				}
+			}
+
+			return $valid;
+		}
+
+		return preg_match( "@[A-Z]@", strval( $this->val ) ) == 1;
+	}
+
+	private function v_mustContainLowercase( bool $active ):bool
+	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
+		if( !$active )
+		{
+			return true;
+		}
+
+		if( \is_array( $this->val ) )
+		{
+			$valid = true;
+
+			foreach( $this->val as $v )
+			{
+				if( preg_match( "@[a-z]@", strval( $this->val ) ) == 0 )
+				{
+					$valid = false;
+					break;
+				}
+			}
+
+			return $valid;
+		}
+
+		return preg_match( "@[a-z]@", strval( $this->val ) ) == 1;
+	}
+
+	private function v_mustContainNumbers( bool $active ):bool
+	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
+		if( !$active )
+		{
+			return true;
+		}
+
+		if( \is_array( $this->val ) )
+		{
+			$valid = true;
+
+			foreach( $this->val as $v )
+			{
+				if( preg_match( "@[0-9]@", strval( $this->val ) ) == 0 )
+				{
+					$valid = false;
+					break;
+				}
+			}
+
+			return $valid;
+		}
+
+		return preg_match( "@[0-9]@", strval( $this->val ) ) == 1;
+	}
+
+	private function v_mustContainSpecialchars( bool $active ):bool
+	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
+		if( !$active )
+		{
+			return true;
+		}
+
+		if( \is_array( $this->val ) )
+		{
+			$valid = true;
+
+			foreach( $this->val as $v )
+			{
+				if( preg_match( "@[^\w]@", strval( $this->val ) ) == 0 )
+				{
+					$valid = false;
+					break;
+				}
+			}
+
+			return $valid;
+		}
+
+		return preg_match( "@[^\w]@", strval( $this->val ) ) == 1;
+	}
+
+	private function v_mustContainEverything( bool $active ):bool
+	{
+		return	$this->v_mustContainUppercase( $active ) &&
+				$this->v_mustContainLowercase( $active ) &&
+				$this->v_mustContainSpecialchars( $active ) &&
+				$this->v_mustContainNumbers( $active );
 	}
 
 	private function v_match( $pattern ):bool
@@ -1317,13 +1459,18 @@ class Validator extends GlobalValues
 			throw new ValidationException('Illegal value for match flag.');
 		}
 
+		if( preg_match( $pattern, strval( $this->val ) ) === false )
+		{
+			throw new ValidationException('Invalid regex');
+		}
+
 		if( \is_array( $this->val ) )
 		{
 			$valid = true;
 
 			foreach( $this->val as $v )
 			{
-				if( preg_match( $pattern, strval( $this->val ) ) === false )
+				if( preg_match( $pattern, strval( $this->val ) ) == 0 )
 				{
 					$valid = false;
 					break;
@@ -1333,7 +1480,7 @@ class Validator extends GlobalValues
 			return $valid;
 		}
 
-		return preg_match( $pattern, strval( $this->val ) ) !== false;
+		return preg_match( $pattern, strval( $this->val ) ) == 1;
 	}
 
 	public function v_inArray( $val ):bool
