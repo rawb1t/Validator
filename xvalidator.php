@@ -6,7 +6,7 @@
  * Validate and sanitize user input and other variables.
  * 
  */
-namespace Validator;
+namespace XValidator;
 
 class From
 {
