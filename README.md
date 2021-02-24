@@ -87,7 +87,7 @@ echo $accept_tos->asBool(); // true (Boolean)
 Let's sanitize the values first:
 ```PHP
 // Every name should be capitalized
-$name->sanitize('capitalizeAll')->validate(['limit' => 100]);
+$name->sanitize('capitalizeAll')->validate(['maxLength' => 100]);
 
 // Username should always be lowercase and everything but alphanumeric chars should be stripped
 $username->sanitize('lowercase', 'alphanumericOnly')->validate(['alphanumeric']);
