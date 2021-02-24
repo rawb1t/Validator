@@ -50,7 +50,7 @@ $gender = Validator\Value::post( 'gender' )->validate(['inArray' => ['male', 'fe
 $accept_tos = Validator\Value::post( 'accept_tos' )->validate(['bool']);
 $pies = Validator\Value::post( 'pies' )->validate(['inArray' => 'Cream']);
 $pies = Validator\Value::post( 'drink' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
-$captcha = Validator\Value::post( 'captcha' )->validate(['numbers', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
+$captcha = Validator\Value::post( 'captcha' )->validate(['number', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
 $bio = Validator\Value::post( 'bio' );
 ```
 
