@@ -1,4 +1,4 @@
-# Validator
+# XValidator
 Validate and sanitize user input and other variables.
 
 This library will not only allow you to validate all your user inputs (POST, GET, REQUEST, COOKIE, SESSION) but also sanitize them fast and easy. There are a lot of predefined filters to use and you can create custom validations and sanitizers as well.
