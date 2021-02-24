@@ -16,7 +16,7 @@ Let's say you have a $\_POST array full of userdata sent via a simple HTML webfo
 - Multiple Selects: Choose your favorite pies (Apple, Cream, Chocolate) (you have to pick at least a creampie)
 - Multiple Selects: Choose your favorite drinks (Coke, Water, Milk) (you have to pick all of them)
 - Advanced Input:   Captcha (add two random numbers, numbers only)
-- Multiline Input:  Biographie (some text with multiple lines)
+- Multiline Input:  Biography (some text with multiple lines)
 
 PHP provides us something like this:
 ```PHP
