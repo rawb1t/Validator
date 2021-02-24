@@ -142,6 +142,11 @@ class Validator extends GlobalValues
 		return is_array( $this->val ) ? count( $this->val ) : strlen( strval( $this->val ) );
 	}
 
+	public function hasError( string $validator ):bool 
+	{
+		return array_search( $validator, $this->errors ) !== false;
+	}
+
 	public function getErrors():array
 	{
 		return $this->errors;
@@ -157,7 +162,7 @@ class Validator extends GlobalValues
 
 	public function sanitize( ...$sanitizion_flags ):Validator
 	{
-		if( empty( GlobalSetup::$s_flags ) &&
+		if( empty( parent::$s_flags ) &&
 			empty( $this->sanitizion_flags ) &&
 			empty( $sanitizion_flags ) )
 		{
@@ -166,11 +171,11 @@ class Validator extends GlobalValues
 
 		if( is_null( $sanitizion_flags ) )
 		{
-			$sanitizion_flags = array_merge( GlobalSetup::$s_flags, $this->sanitizion_flags );
+			$sanitizion_flags = array_merge( parent::$s_flags, $this->sanitizion_flags );
 		}
 		else
 		{
-			$sanitizion_flags = array_merge( GlobalSetup::$s_flags, $this->sanitizion_flags, $sanitizion_flags );
+			$sanitizion_flags = array_merge( parent::$s_flags, $this->sanitizion_flags, $sanitizion_flags );
 		}
 
 		foreach( $sanitizion_flags as $flag )
@@ -227,7 +232,7 @@ class Validator extends GlobalValues
 	{
 		$is_valid = true;
 
-		if( empty( GlobalSetup::$v_flags ) &&
+		if( empty( parent::$v_flags ) &&
 			empty( $this->validation_flags ) &&
 			empty( $validation_flags ) )
 		{
@@ -236,12 +241,14 @@ class Validator extends GlobalValues
 
 		if( is_null( $validation_flags ) )
 		{
-			$validation_flags = array_merge( GlobalSetup::$v_flags, $this->validation_flags );
+			$validation_flags = array_merge( parent::$v_flags, $this->validation_flags );
 		}
 		else
 		{
-			$validation_flags = array_merge( GlobalSetup::$v_flags, $this->validation_flags, $validation_flags );
+			$validation_flags = array_merge( parent::$v_flags, $this->validation_flags, $validation_flags );
 		}
+
+		$validation_flags = $this->fix_validation_flags( $validation_flags );
 
 		foreach( $validation_flags as $flag => $f )
 		{
@@ -289,11 +296,11 @@ class Validator extends GlobalValues
 
 		if( $is_valid )
 		{
-			GlobalValues::putValid( $this->name, $this->val );
+			parent::putValid( $this->name, $this->val );
 		}
 		else
 		{
-			GlobalValues::putInvalid( $this->name, $this->val );
+			parent::putInvalid( $this->name, $this->val );
 		}
 
 		$this->is_valid = $is_valid;
@@ -633,6 +640,11 @@ class Validator extends GlobalValues
 
 	private function v_equal( $val )
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( \is_string( $val ) )
 		{
 			$val = strval( $val );
@@ -660,6 +672,11 @@ class Validator extends GlobalValues
 
 	private function v_equalKey( $val )
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( \is_array( $val ) )
 		{
 			$val = (array) $val;
@@ -683,6 +700,11 @@ class Validator extends GlobalValues
 
 	private function v_unequal( $val )
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( \is_string( $val ) )
 		{
 			$val = strval( $val );
@@ -710,6 +732,11 @@ class Validator extends GlobalValues
 
 	private function v_unequalKey( $val )
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( \is_array( $val ) )
 		{
 			$val = (array) $val;
@@ -738,16 +765,16 @@ class Validator extends GlobalValues
 			return true;
 		}
 
-		if( \is_array( $this->val ) )
-		{
-			return count( $this->val ) > 0;
-		}
-
-		return strlen( strval( $this->val ) ) > 0;
+		return !empty( $this->val );
 	}
 
 	private function v_minLength( int $min ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( \is_int( $min ) )
 		{
 			$min = intval( $min );
@@ -766,6 +793,11 @@ class Validator extends GlobalValues
 
 	private function v_maxLength( int $max ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( \is_int( $max ) )
 		{
 			$max = intval( $max );
@@ -784,6 +816,11 @@ class Validator extends GlobalValues
 
 	private function v_min( $min ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( \is_int( $min ) )
 		{
 			$min = intval( $min );
@@ -822,6 +859,11 @@ class Validator extends GlobalValues
 
 	private function v_max( $max ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( \is_int( $max ) )
 		{
 			$max = intval( $max );
@@ -860,6 +902,11 @@ class Validator extends GlobalValues
 
 	private function v_email( bool $active ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( !$active )
 		{
 			return true;
@@ -886,6 +933,11 @@ class Validator extends GlobalValues
 
 	private function v_url( bool $active ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( !$active )
 		{
 			return true;
@@ -912,6 +964,11 @@ class Validator extends GlobalValues
 
 	private function v_ip( bool $active ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( !$active )
 		{
 			return true;
@@ -938,6 +995,11 @@ class Validator extends GlobalValues
 
 	private function v_bool( bool $active ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( !$active )
 		{
 			return true;
@@ -964,6 +1026,11 @@ class Validator extends GlobalValues
 
 	private function v_filter( $filter ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( \is_int( $filter ) )
 		{
 			$filter = intval( $filter );
@@ -999,6 +1066,11 @@ class Validator extends GlobalValues
 	private function v_date( $mode ):bool
 	{
 		$pattern = "yyyy-mm-dd";
+
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
 
 		if( \is_string( $mode ) )
 		{
@@ -1038,6 +1110,11 @@ class Validator extends GlobalValues
 	{
 		$pattern = "hh:ii:ss";
 
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( \is_string( $mode ) )
 		{
 			$pattern = $mode;
@@ -1074,6 +1151,11 @@ class Validator extends GlobalValues
 
 	private function v_number( bool $active ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( !$active )
 		{
 			return true;
@@ -1100,6 +1182,11 @@ class Validator extends GlobalValues
 
 	private function v_text( bool $active ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( !$active )
 		{
 			return true;
@@ -1126,6 +1213,11 @@ class Validator extends GlobalValues
 
 	private function v_alphanumeric( bool $active ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( !$active )
 		{
 			return true;
@@ -1152,6 +1244,11 @@ class Validator extends GlobalValues
 
 	private function v_specialchars( bool $active ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( !$active )
 		{
 			return true;
@@ -1178,6 +1275,11 @@ class Validator extends GlobalValues
 
 	private function v_match( $pattern ):bool
 	{
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( \is_string( $pattern ) )
 		{
 			$pattern = strval( $pattern );
@@ -1215,6 +1317,11 @@ class Validator extends GlobalValues
 		$needle = null;
 		$haystack = null;
 
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
+
 		if( !\is_array( $val ) && \is_array( $this->val ) )
 		{
 			$needle = $val;
@@ -1245,6 +1352,11 @@ class Validator extends GlobalValues
 	{
 		$needle = null;
 		$haystack = null;
+
+		if( empty( $this->val ) )
+		{
+			return true;
+		}
 
 		if( !\is_array( $val ) && \is_array( $this->val ) )
 		{
@@ -1295,6 +1407,25 @@ class Validator extends GlobalValues
 	public function asBool():int
 	{
 		return boolval( $this->val );
+	}
+
+	private function fix_validation_flags( array $flags ):array
+	{
+		$fixed_flags = array();
+
+		foreach( $flags as $key => $value )
+		{
+			if( !\is_string( $key ) && \is_string( $value ) )
+			{				
+				$fixed_flags[$value] = true;
+			}
+			else
+			{
+				$fixed_flags[$key] = $value;
+			}
+		}
+
+		return $fixed_flags;
 	}
 
 	private function translate_date_pattern( string $pattern ):string
