@@ -112,10 +112,10 @@ Validator\GlobalValues::getAllInvalids(); // Array with all invalid values
 - **trim** (like trim())
 - **ltrim** (like ltrim())
 - **rtrim** (like rtrim())
-- **numbersOnly** (removes everything but numbers)
-- **alphaOnly** (removes everything but chars a-z, A-Z)
+- **numberOnly** (removes everything but numbers)
+- **letterOnly** (removes everything but chars a-z, A-Z)
 - **alphanumericOnly** (removes everything but alphanumeric chars)
-- **specialcharsOnly** (removes everything but special chars)
+- **specialcharOnly** (removes everything but special chars)
 - **stripWhitespaces** (removes all whitespaces)
 - **stripMultipleWhitespaces** (removes multiple whitespaces that appear in a row and replace it with a single one)
 - **slash** (like addslashes())
@@ -157,11 +157,16 @@ function( $val )
 - **bool** (array, string) checks if a single value or all values of an array are a correct boolean value
 - **filter** (array, string) checks if a single value or all values of an array are filter_var()-validated (parameter contains the FILTER_VALIDATE_*)
 - **date** (array, string) checks if a single value or all values of an array are a correct date (based on the default modell ("yyyy-mm-dd") or based on an own modell which can be provided with the parameter. yyyy = Year with 4 digits, yy = year with 2 digits, mm = month, dd = day. Caution: Special chars like slashes need to be escaped because this validator uses regex and preg_match();
-- **time** (array, string) checks if a single value or all values of an array are a correct time (based on the default modell ("hh:ii:ss") or based on an own modell which can be provided with the parameter. hh = hours, ii = minutes, ss = seconds. Caution: Special chars like slashes need to be escaped because this validator uses regex and preg_match();
-- **numbers** (array, string) checks if a single value or all values of an array are a number
-- **text** (array, string) checks if a single value or all values of an array are a text without numbers or special chars
-- **alphanumeric** (array, string) checks if a single value or all values of an array are an alphanumeric string
-- **specialchars** (array, string) checks if a single value or all values of an array are a specialchar string
+- **time** (array, string) checks if a single value or all values of an array are a correct time (based on the default modell ("hh:ii:ss") or based on an own modell which can be provided with the parameter. hh = hours, ii = minutes, ss = seconds. Caution: Special chars like slashes need to be escaped because this validator uses regex and preg_match()
+- **numberOnly** (array, string) checks if a single value or all values of an array are a number
+- **letterOnly** (array, string) checks if a single value or all values of an array are a text without numbers or special chars
+- **alphanumericOnly** (array, string) checks if a single value or all values of an array are an alphanumeric string
+- **specialcharOnly** (array, string) checks if a single value or all values of an array are a specialchar string
+- **mustContainUppercase** (array, string) checks if a single value or all values of an array contain at least one uppercase letter
+- **mustContainLowercase** (array, string) checks if a single value or all values of an array contain at least one lowercase letter
+- **mustContainNumbers** (array, string) checks if a single value or all values of an array contain at least one digit
+- **mustContainSpecialchars** (array, string) checks if a single value or all values of an array contain at least one special char
+- **mustContainEverything** (array, string) combines _mustContainUppercase_, _mustContainLowercase_, _mustContainNumbers_ and _mustContainSpecialchars_
 - **match** (array, string) checks if a single value or all values of an array matching a given pattern (via parameter)
 - **inArray** (array) checks if the parameter is within an array
 - **notInArray** (array) checks if the parameter is not within an array
