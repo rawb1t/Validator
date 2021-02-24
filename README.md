@@ -9,7 +9,7 @@ Let's say you have a $\_POST array full of userdata sent via a simple HTML webfo
 - Simple Input:     Real name (max. 100 chars)
 - Advanced Input:   Username (only alphanumeric chars)
 - Datepicker:       Birthday (date format)
-- Advanced Input:   E-Mail (email format)
+- Advanced Input:   E-Mail (email format and check if email is already in use)
 - Advanced Input:   Password (min. 8 chars, uppercase, lowercase, numbers and special chars for security purposes)
 - Select:           Gender (only 'male' or 'female' to choose)
 - Simple Checkbox:  Accept the terms of service (a boolean value)
@@ -51,7 +51,7 @@ $captcha_result = 15;
 $name = From::post( 'name' )->validate(['maxLength' => 100]);
 $username = From::post( 'username' )->validate(['alphanumericOnly']);
 $birthday = From::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
-$email = From::post( 'email' )->validate(['email']);
+$email = From::post( 'email' )->validate(['email', function( $val ) { return check_if_email_is_available( $val ); }]);
 $password = From::post( 'password' )->validate(['minLength' => 8, 'mustContainEverything']);
 $gender = From::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
 $accept_tos = From::post( 'accept_tos' )->validate(['bool']);
