@@ -46,6 +46,8 @@ use Validator\GlobalValues;
 use Validator\InputException;
 use Validator\In;
 
+$captcha_result = 15;
+
 $name = In::post( 'name' )->validate(['maxLength' => 100]);
 $username = In::post( 'username' )->validate(['alphanumeric']);
 $birthday = In::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
