@@ -158,14 +158,6 @@ class Validator extends GlobalValues
 		return $this->errors;
 	}
 
-	public function s( string $flag ):Validator
-	{
-		$this->sanitizion_flags[] = $flag;
-		$this->sanitize();
-
-		return $this;
-	}
-
 	public function sanitize( ...$sanitizion_flags ):Validator
 	{
 		if( empty( parent::$s_flags ) &&
@@ -201,36 +193,6 @@ class Validator extends GlobalValues
 			}
 		}
 
-		return $this;
-	}
-
-	public function v( string $flag, $val = null ):Validator
-	{
-		if( is_null( $val ) )
-		{
-			$this->validation_flags[$flag] = true;
-		}
-		else
-		{
-			$this->validation_flags[$flag] = $val;
-		}
-
-		return $this;
-	}
-
-	public function rv( string $flag ):Validator
-	{
-		if( isset( $this->validation_flags[$flag] ) )
-		{
-			unset( $this->validation_flags[$flag] );
-		}
-
-		return $this;
-	}
-
-	public function rav():Validator
-	{
-		$this->validation_flags = [];
 		return $this;
 	}
 
