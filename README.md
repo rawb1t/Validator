@@ -92,6 +92,11 @@ Let's say all inputs have to be required fields:
 Validator\GlobalSetup::setValidate(['required']);
 ```
 
+... except for birthday:
+```PHP
+$birthday = Validator\Value::post( 'birthday' )->validate(['required' => false, 'date' => 'mm\/dd\/yyyy']);
+```
+
 I want to know which values are valid and which are invalid:
 ```PHP
 Validator\GlobalValues::getAllValids();   // Array with all valid values
