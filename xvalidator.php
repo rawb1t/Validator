@@ -238,7 +238,7 @@ class Validator extends GlobalValues
 					break;
 				}
 			}
-			elseif( is_string( $flag ) )
+			else
 			{
 				$method = 'v_' . $flag;
 
@@ -249,21 +249,6 @@ class Validator extends GlobalValues
 					if( !$is_valid )
 					{
 						$error = strtolower( $flag );
-						break;
-					}
-				}
-			}
-			else
-			{
-				$method = 'v_' . $f;
-
-				if( method_exists( $this, $method ) )
-				{
-					$is_valid = call_user_func_array([ $this, $method ], [ true ]);
-
-					if( !$is_valid )
-					{
-						$error = strtolower( $f );
 						break;
 					}
 				}
