@@ -97,3 +97,62 @@ I want to know which values are valid and which are invalid:
 Validator\GlobalValues::getAllValids();   // Array with all valid values
 Validator\GlobalValues::getAllInvalids(); // Array with all invalid values
 ```
+
+### All available sanitizers
+
+- **trim** (like trim())
+- **ltrim** (like ltrim())
+- **rtrim** (like rtrim())
+- **numbersOnly** (removes everything but numbers)
+- **alphaOnly** (removes everything but chars a-z, A-Z)
+- **alphanumericOnly** (removes everything but alphanumeric chars)
+- **specialcharsOnly** (removes everything but special chars)
+- **stripWhitespaces** (removes all whitespaces)
+- **stripMultipleWhitespaces** (removes multiple whitespaces that appear in a row and replace it with a single one)
+- **slash** (like addslashes())
+- **unslash** (like stripslashes())
+- **stripTags** (like strip_tags())
+- **maskTags** (like htmlspecialchars())
+- **capitalize** (capitalizes the first character of a string)
+- **capitalizeAll** (capitalizes every word of a string)
+- **uppercase** (like strtoupper())
+- **lowercase** (like strtolower())
+- **break** (like nl2br() without XHTML syntax)
+- **int** (like filter_var() with FILTER_SANITIZE_NUMBER_INT)
+- **float** (like filter_var() with FILTER_SANITIZE_NUMBER_FLOAT)
+- **email** (like filter_var() with FILTER_SANITIZE_EMAIL)
+- **url** (like filter_var() with FILTER_SANITIZE_URL)
+
+##### Custom sanitizers
+```PHP
+// $val contains the value of the Validator
+function( $val )
+{
+  return $val;
+}
+```
+### All available validators
+
+- **equal** (number, string, array) if parameter is an array: checks if arrays contain the same elements otherwise compares simple variables
+- **equalKey** (array) same as _equal_ but only with arrays. The keys will be compared
+- **unequal** (number, string, array) if parameter is an array: checks if arrays don't contain the same elements otherwise compares simple variables if they are different
+- **unequalKey** (array) same as _unequal_ but only with arrays. The keys will be compared
+- **required** (number, string, array) checks if an array contains at least one element or a single variable a value with at least one character
+- **minLength** (string) checks if an string has a minimum length
+- **maxLength** (string) checks if an string has a maximum length
+- **min** (number, array) checks if the amount of elements of an array or a number is bigger than the given parameter
+- **min** (number, array) checks if the amount of elements of an array or a number is smaller than the given parameter
+- **email** (array, string) checks if a single value or all values of an array are a correct e-mail address
+- **url** (array, string) checks if a single value or all values of an array are a correct URL
+- **ip** (array, string) checks if a single value or all values of an array are a correct ip address
+- **bool** (array, string) checks if a single value or all values of an array are a correct boolean value
+- **filter** (array, string) checks if a single value or all values of an array are filter_var()-validated (parameter contains the FILTER_VALIDATE_*)
+- **date** (array, string) checks if a single value or all values of an array are a correct date (based on the default modell ("yyyy-mm-dd") or based on an own modell which can be provided with the parameter. yyyy = Year with 4 digits, yy = year with 2 digits, mm = month, dd = day. Caution: Special chars like slashes need to be escaped because this validator uses regex and preg_match();
+- **time** (array, string) checks if a single value or all values of an array are a correct time (based on the default modell ("hh:ii:ss") or based on an own modell which can be provided with the parameter. hh = hours, ii = minutes, ss = seconds. Caution: Special chars like slashes need to be escaped because this validator uses regex and preg_match();
+- **numbers** (array, string) checks if a single value or all values of an array are a number
+- **text** (array, string) checks if a single value or all values of an array are a text without numbers or special chars
+- **alphanumeric** (array, string) checks if a single value or all values of an array are an alphanumeric string
+- **specialchars** (array, string) checks if a single value or all values of an array are a specialchar string
+- **match** (array, string) checks if a single value or all values of an array matching a given pattern (via parameter)
+- **inArray** (array) checks if the parameter is within an array
+- **notInArray** (array) checks if the parameter is not within an array
