@@ -1111,18 +1111,19 @@ class Validator extends GlobalValues
 
 		$pattern = $this->translate_date_pattern( $pattern );
 
-		if( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) === false )
-		{
-			throw new ValidationException('Invalid regex');
-		}
-
 		if( \is_array( $this->val ) )
 		{
 			$valid = true;
 
 			foreach( $this->val as $v )
 			{
-				if( !boolval( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) ) )
+				$res = preg_match( "/^" . $pattern . "$/", strval( $v ) );
+				if( $res === false )
+				{
+					throw new ValidationException('Invalid regex');
+				}
+
+				if( $res == 0 )
 				{
 					$valid = false;
 					break;
@@ -1131,8 +1132,12 @@ class Validator extends GlobalValues
 
 			return $valid;
 		}
+		elseif( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) === false )
+		{
+			throw new ValidationException('Invalid regex');
+		}
 
-		return boolval( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) ) == true;
+		return preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) == 1;
 	}
 
 	private function v_time( $mode = null ):bool
@@ -1159,18 +1164,19 @@ class Validator extends GlobalValues
 
 		$pattern = $this->translate_time_pattern( $pattern );
 
-		if( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) === false )
-		{
-			throw new ValidationException('Invalid regex');
-		}
-
 		if( \is_array( $this->val ) )
 		{
 			$valid = true;
 
 			foreach( $this->val as $v )
 			{
-				if( !boolval( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) ) )
+				$res = preg_match( "/^" . $pattern . "$/", strval( $v ) );
+				if( $res === false )
+				{
+					throw new ValidationException('Invalid regex');
+				}
+
+				if( $res == 0 )
 				{
 					$valid = false;
 					break;
@@ -1179,8 +1185,12 @@ class Validator extends GlobalValues
 
 			return $valid;
 		}
+		elseif( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) === false )
+		{
+			throw new ValidationException('Invalid regex');
+		}
 
-		return boolval( preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) ) == true;
+		return preg_match( "/^" . $pattern . "$/", strval( $this->val ) ) == 1;
 	}
 
 	private function v_numberOnly( bool $active ):bool
@@ -1201,7 +1211,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( preg_match( "/\D+/", strval( $this->val ) ) == 1 )
+				if( preg_match( "/\D+/", strval( $v ) ) == 1 )
 				{
 					$valid = false;
 					break;
@@ -1232,7 +1242,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( preg_match( "/([^a-zA-Z]+)/", strval( $this->val ) ) == 1 )
+				if( preg_match( "/([^a-zA-Z]+)/", strval( $v ) ) == 1 )
 				{
 					$valid = false;
 					break;
@@ -1263,7 +1273,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( preg_match( "/([^a-zA-Z0-9]+)/", strval( $this->val ) ) == 1 )
+				if( preg_match( "/([^a-zA-Z0-9]+)/", strval( $v ) ) == 1 )
 				{
 					$valid = false;
 					break;
@@ -1294,7 +1304,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( preg_match( "/([a-zA-Z0-9]+)/", strval( $this->val ) ) == 1 )
+				if( preg_match( "/([a-zA-Z0-9]+)/", strval( $v ) ) == 1 )
 				{
 					$valid = false;
 					break;
@@ -1325,7 +1335,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( preg_match( "@[A-Z]@", strval( $this->val ) ) == 0 )
+				if( preg_match( "@[A-Z]@", strval( $v ) ) == 0 )
 				{
 					$valid = false;
 					break;
@@ -1356,7 +1366,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( preg_match( "@[a-z]@", strval( $this->val ) ) == 0 )
+				if( preg_match( "@[a-z]@", strval( $v ) ) == 0 )
 				{
 					$valid = false;
 					break;
@@ -1387,7 +1397,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( preg_match( "@[0-9]@", strval( $this->val ) ) == 0 )
+				if( preg_match( "@[0-9]@", strval( $v ) ) == 0 )
 				{
 					$valid = false;
 					break;
@@ -1418,7 +1428,7 @@ class Validator extends GlobalValues
 
 			foreach( $this->val as $v )
 			{
-				if( preg_match( "@[^\w]@", strval( $this->val ) ) == 0 )
+				if( preg_match( "@[^\w]@", strval( $v ) ) == 0 )
 				{
 					$valid = false;
 					break;
@@ -1459,18 +1469,19 @@ class Validator extends GlobalValues
 			throw new ValidationException('Illegal value for match flag.');
 		}
 
-		if( preg_match( $pattern, strval( $this->val ) ) === false )
-		{
-			throw new ValidationException('Invalid regex');
-		}
-
 		if( \is_array( $this->val ) )
 		{
 			$valid = true;
 
 			foreach( $this->val as $v )
 			{
-				if( preg_match( $pattern, strval( $this->val ) ) == 0 )
+				$res = preg_match( $pattern, strval( $v ) );
+				if( $res === false )
+				{
+					throw new ValidationException('Invalid regex');
+				}
+
+				if( $res == 0 )
 				{
 					$valid = false;
 					break;
@@ -1478,6 +1489,10 @@ class Validator extends GlobalValues
 			}
 
 			return $valid;
+		}
+		elseif( preg_match( $pattern, strval( $this->val ) ) === false )
+		{
+			throw new ValidationException('Invalid regex');
 		}
 
 		return preg_match( $pattern, strval( $this->val ) ) == 1;
