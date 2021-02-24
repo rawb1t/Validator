@@ -44,21 +44,21 @@ Let's validate this:
 use Validator\GlobalSetup;
 use Validator\GlobalValues;
 use Validator\InputException;
-use Validator\In;
+use Validator\From;
 
 $captcha_result = 15;
 
-$name = In::post( 'name' )->validate(['maxLength' => 100]);
-$username = In::post( 'username' )->validate(['alphanumeric']);
-$birthday = In::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
-$email = In::post( 'email' )->validate(['email']);
-$password = In::post( 'password' )->validate(['minLength' => 8, 'mustContainEverything']);
-$gender = In::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
-$accept_tos = In::post( 'accept_tos' )->validate(['bool']);
-$pies = In::post( 'pies' )->validate(['inArray' => 'Cream']);
-$pies = In::post( 'drink' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
-$captcha = In::post( 'captcha' )->validate(['number', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
-$bio = In::post( 'bio' );
+$name = From::post( 'name' )->validate(['maxLength' => 100]);
+$username = From::post( 'username' )->validate(['alphanumeric']);
+$birthday = From::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
+$email = From::post( 'email' )->validate(['email']);
+$password = From::post( 'password' )->validate(['minLength' => 8, 'mustContainEverything']);
+$gender = From::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
+$accept_tos = From::post( 'accept_tos' )->validate(['bool']);
+$pies = From::post( 'pies' )->validate(['inArray' => 'Cream']);
+$pies = From::post( 'drink' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
+$captcha = From::post( 'captcha' )->validate(['number', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
+$bio = From::post( 'bio' );
 ```
 Hint: Setting the second parameter of the validate() function _true_ an exception will be thrown if an input is invalid. By setting it _false_ exceptions can also be deactivated for single validations;
 
@@ -105,7 +105,7 @@ GlobalSetup::alwaysThrow(true);
 
 ... except for birthday:
 ```PHP
-$birthday = In::post( 'birthday' )->validate(['required' => false, 'date' => 'mm\/dd\/yyyy']);
+$birthday = From::post( 'birthday' )->validate(['required' => false, 'date' => 'mm\/dd\/yyyy']);
 ```
 
 I want to know which values are valid and which are invalid:
