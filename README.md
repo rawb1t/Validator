@@ -64,6 +64,7 @@ What other informations does Validator provide?
 ```PHP
 $name->isEmpty();     // Returns true, if there's no value
 $name->getLength();   // Returns the length of a value as an Integer
+$name->getErrors();   // Get a list of errors that occured due to the validation
 ```
 
 How to get the value?
