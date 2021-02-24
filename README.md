@@ -10,7 +10,7 @@ Let's say you have a $\_POST array full of userdata sent via a simple HTML webfo
 - Advanced Input:   Username (only alphanumeric chars)
 - Datepicker:       Birthday (date format)
 - Advanced Input:   E-Mail (email format)
-- Advanced Input:   Password (min. 8 chars for security purposes)
+- Advanced Input:   Password (min. 8 chars, uppercase, lowercase, numbers and special chars for security purposes)
 - Select:           Gender (only 'male' or 'female' to choose)
 - Simple Checkbox:  Accept your terms of service (a boolean value)
 - Multiple Selects: Choose your favorite pies (Apple, Cream, Chocolate) (you have to pick at least a creampie)
@@ -52,7 +52,7 @@ $name = In::post( 'name' )->validate(['maxLength' => 100]);
 $username = In::post( 'username' )->validate(['alphanumeric']);
 $birthday = In::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
 $email = In::post( 'email' )->validate(['email']);
-$password = In::post( 'password' )->validate(['minLength' => 8]);
+$password = In::post( 'password' )->validate(['minLength' => 8, 'mustContainEverything']);
 $gender = In::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
 $accept_tos = In::post( 'accept_tos' )->validate(['bool']);
 $pies = In::post( 'pies' )->validate(['inArray' => 'Cream']);
