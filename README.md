@@ -79,8 +79,8 @@ Let's sanitize the values first:
 // Every name should be capitalized
 $name->sanitize('capitalizeAll')->validate(['limit' => 100]);
 
-// Username should always be lowercase
-$username->sanitize('lowercase')->validate(['alphanumeric']);
+// Username should always be lowercase and everything but alphanumeric chars should be stripped
+$username->sanitize('lowercase', 'alphanumericOnly')->validate(['alphanumeric']);
 
 // No html in bio allowed, cut after 30 chars but add line <br> linebreaks
 $bio->sanitize('stripTags', function( $val ) { return substr( $val, 0, 30 ); }, 'break' );
