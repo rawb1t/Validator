@@ -41,10 +41,10 @@ $_POST['bio'] = "Hello, I am John.
 
 Let's validate this:
 ```PHP
-use Validator\GlobalSetup;
-use Validator\GlobalValues;
-use Validator\InputException;
-use Validator\From;
+use XValidator\GlobalSetup;
+use XValidator\GlobalValues;
+use XValidator\InputException;
+use XValidator\From;
 
 $captcha_result = 15;
 
