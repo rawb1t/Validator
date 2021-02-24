@@ -119,6 +119,7 @@ class Validator extends GlobalValues
 	private $is_valid = false;
 	private $sanitizion_flags = [];
 	private $validation_flags = [];
+	private $errors = [];
 
 	public function __construct( $val, ?string $name = null )
 	{
@@ -139,6 +140,11 @@ class Validator extends GlobalValues
 	public function getLength():int
 	{
 		return is_array( $this->val ) ? count( $this->val ) : strlen( strval( $this->val ) );
+	}
+
+	public function getErrors():array
+	{
+		return $this->errors;
 	}
 
 	public function s( string $flag ):Validator
@@ -245,6 +251,7 @@ class Validator extends GlobalValues
 
 				if( !$is_valid )
 				{
+					$this->errors[] = "custom-{$flag}";
 					break;
 				}
 			}
@@ -258,6 +265,7 @@ class Validator extends GlobalValues
 
 					if( !$is_valid )
 					{
+						$this->errors[] = strtolower( $flag );
 						break;
 					}
 				}
@@ -272,6 +280,7 @@ class Validator extends GlobalValues
 
 					if( !$is_valid )
 					{
+						$this->errors[] = strtolower( $f );
 						break;
 					}
 				}
@@ -632,16 +641,13 @@ class Validator extends GlobalValues
 		{
 			$val = (array) $val;
 		}
-		elseif( \is_bool( $val ) )
+		elseif( $val === false )
 		{
-			if( boolval( $val ) == false )
-			{
-				return true;
-			}
+			return true;
 		}
 		else
 		{
-			throw new ValidationException('Illegal value for length flag.');
+			throw new ValidationException('Illegal value for equal flag.');
 		}
 
 		if( \is_array( $this->val ) && \is_array( $val ) )
@@ -650,6 +656,29 @@ class Validator extends GlobalValues
 		}
 
 		return strval( $this->val ) == $val;
+	}
+
+	private function v_equalKey( $val )
+	{
+		if( \is_array( $val ) )
+		{
+			$val = (array) $val;
+		}
+		elseif( $val === false )
+		{
+			return true;
+		}
+		else
+		{
+			throw new ValidationException('Illegal value for equalKey flag.');
+		}
+
+		if( !\is_array( $this->val ) )
+		{
+			throw new ValidationException('Value is not an array.');
+		}
+
+		return empty( array_diff_key( $this->val, $val ) );
 	}
 
 	private function v_unequal( $val )
@@ -662,16 +691,13 @@ class Validator extends GlobalValues
 		{
 			$val = (array) $val;
 		}
-		elseif( \is_bool( $val ) )
+		elseif( $val === false )
 		{
-			if( boolval( $val ) == false )
-			{
-				return true;
-			}
+			return true;
 		}
 		else
 		{
-			throw new ValidationException('Illegal value for length flag.');
+			throw new ValidationException('Illegal value for unequal flag.');
 		}
 
 		if( \is_array( $this->val ) && \is_array( $val ) )
@@ -680,6 +706,29 @@ class Validator extends GlobalValues
 		}
 
 		return strval( $this->val ) != $val;
+	}
+
+	private function v_unequalKey( $val )
+	{
+		if( \is_array( $val ) )
+		{
+			$val = (array) $val;
+		}
+		elseif( $val === false )
+		{
+			return true;
+		}
+		else
+		{
+			throw new ValidationException('Illegal value for unequalKey flag.');
+		}
+
+		if( !\is_array( $this->val ) )
+		{
+			throw new ValidationException('Value is not an array.');
+		}
+
+		return !empty( array_diff_key( $this->val, $val ) );
 	}
 
 	private function v_required( bool $active ):bool
@@ -697,12 +746,17 @@ class Validator extends GlobalValues
 		return strlen( strval( $this->val ) ) > 0;
 	}
 
-	private function v_length( $length ):bool
+	private function v_minLength( int $length ):bool
 	{
-		return $this->v_max( $length );
+		return $this->v_min( $length, false );
 	}
 
-	private function v_min( $min ):bool
+	private function v_maxLength( int $length ):bool
+	{
+		return $this->v_max( $length, false );
+	}
+
+	private function v_min( $min, bool $useNumbers = true ):bool
 	{
 		if( \is_int( $min ) )
 		{
@@ -712,7 +766,7 @@ class Validator extends GlobalValues
 		{
 			$min = floatval( $min );
 		}
-		elseif( is_null( $min ) || $min === false )
+		elseif( $min === false )
 		{
 			return true;
 		}
@@ -721,7 +775,7 @@ class Validator extends GlobalValues
 			throw new ValidationException('Illegal value for min flag.');
 		}
 
-		if( is_numeric( $this->val ) )
+		if( is_numeric( $this->val ) && $useNumbers )
 		{
 			if( ((float) $this->val != (int) $this->val) )
 			{
@@ -744,7 +798,7 @@ class Validator extends GlobalValues
 		return false;
 	}
 
-	private function v_max( $max ):bool
+	private function v_max( $max, bool $useNumbers = true ):bool
 	{
 		if( \is_int( $max ) )
 		{
@@ -754,7 +808,7 @@ class Validator extends GlobalValues
 		{
 			$max = floatval( $max );
 		}
-		elseif( is_null( $max ) || $max === false )
+		elseif( $max === false )
 		{
 			return true;
 		}
@@ -763,7 +817,7 @@ class Validator extends GlobalValues
 			throw new ValidationException('Illegal value for max flag.');
 		}
 
-		if( is_numeric( $this->val ) )
+		if( is_numeric( $this->val ) && $useNumbers )
 		{
 			if( ((float) $this->val != (int) $this->val) )
 			{
@@ -896,12 +950,9 @@ class Validator extends GlobalValues
 		{
 			$filter = intval( $filter );
 		}
-		elseif( \is_bool( $filter ) )
+		elseif( $filter === false )
 		{
-			if( boolval( $filter ) == false )
-			{
-				return true;
-			}
+			return true;
 		}
 		else
 		{
@@ -935,12 +986,9 @@ class Validator extends GlobalValues
 		{
 			$pattern = $mode;
 		}
-		elseif( \is_bool( $mode ) )
+		elseif( $mode === false )
 		{
-			if( boolval( $mode ) == false )
-			{
-				return true;
-			}
+			return true;
 		}
 		else
 		{
@@ -976,12 +1024,9 @@ class Validator extends GlobalValues
 		{
 			$pattern = $mode;
 		}
-		elseif( \is_bool( $mode ) )
+		elseif( $mode === false )
 		{
-			if( boolval( $mode ) == false )
-			{
-				return true;
-			}
+			return true;
 		}
 		else
 		{
@@ -1119,12 +1164,9 @@ class Validator extends GlobalValues
 		{
 			$pattern = strval( $pattern );
 		}
-		elseif( \is_bool( $pattern ) )
+		elseif( $pattern === false )
 		{
-			if( boolval( $pattern ) == false )
-			{
-				return true;
-			}
+			return true;
 		}
 		else
 		{
@@ -1150,30 +1192,66 @@ class Validator extends GlobalValues
 		return preg_match( $pattern, strval( $this->val ) ) !== false;
 	}
 
-	public function v_inArray( $needle ):bool
+	public function v_inArray( $val ):bool
 	{
-		if( \is_string( $needle ) )
+		$needle = null;
+		$haystack = null;
+
+		if( !\is_array( $val ) && \is_array( $this->val ) )
 		{
-			$needle = strval( $needle );
+			$needle = $val;
+			$haystack = $this->val;
 		}
-		elseif( \is_bool( $needle ) )
+		elseif( \is_array( $val ) && !\is_array( $this->val ) )
 		{
-			if( boolval( $needle ) == false )
-			{
-				return true;
-			}
+			$needle = $this->val;
+			$haystack = $val;
+		}
+		elseif( \is_array( $val ) && \is_array( $this->val ) )
+		{
+			return $this->v_equal( $val );
+		}
+		elseif( $val === false )
+		{
+			return true;
 		}
 		else
 		{
 			throw new ValidationException('Illegal value for inArray flag.');
 		}
 
-		if( !\is_array( $this->val ) )
+		return \in_array( $needle, $haystack );
+	}
+
+	public function v_notInArray( $val ):bool
+	{
+		$needle = null;
+		$haystack = null;
+
+		if( !\is_array( $val ) && \is_array( $this->val ) )
 		{
-			throw new ValidationException('Value is not an array.');
+			$needle = $val;
+			$haystack = $this->val;
+		}
+		elseif( \is_array( $val ) && !\is_array( $this->val ) )
+		{
+			$needle = $this->val;
+			$haystack = $val;
+		}
+		elseif( \is_array( $val ) && \is_array( $this->val ) )
+		{
+			return $this->v_unequal( $val );
+		}
+		elseif( $val === false )
+		{
+			return true;
+		}
+		else
+		{
+			throw new ValidationException('Illegal value for inArray flag.');
 		}
 
-		return \in_array( $needle, $this->val );
+		return !\in_array( $needle, $haystack );
 	}
 
 	public function get()
