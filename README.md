@@ -41,17 +41,22 @@ $_POST['bio'] = "Hello, I am John.
 
 Let's validate this:
 ```PHP
-$name = Validator\In::post( 'name' )->validate(['maxLength' => 100]);
-$username = Validator\In::post( 'username' )->validate(['alphanumeric']);
-$birthday = Validator\In::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
-$email = Validator\In::post( 'email' )->validate(['email']);
-$password = Validator\In::post( 'password' )->validate(['minLength' => 8]);
-$gender = Validator\In::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
-$accept_tos = Validator\In::post( 'accept_tos' )->validate(['bool']);
-$pies = Validator\In::post( 'pies' )->validate(['inArray' => 'Cream']);
-$pies = Validator\In::post( 'drink' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
-$captcha = Validator\In::post( 'captcha' )->validate(['number', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
-$bio = Validator\In::post( 'bio' );
+use Validator\GlobalSetup;
+use Validator\GlobalValues;
+use Validator\InputException;
+use Validator\In;
+
+$name = In::post( 'name' )->validate(['maxLength' => 100]);
+$username = In::post( 'username' )->validate(['alphanumeric']);
+$birthday = In::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
+$email = In::post( 'email' )->validate(['email']);
+$password = In::post( 'password' )->validate(['minLength' => 8]);
+$gender = In::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
+$accept_tos = In::post( 'accept_tos' )->validate(['bool']);
+$pies = In::post( 'pies' )->validate(['inArray' => 'Cream']);
+$pies = In::post( 'drink' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
+$captcha = In::post( 'captcha' )->validate(['number', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
+$bio = In::post( 'bio' );
 ```
 Hint: Setting the second parameter of the validate() function _true_ an exception will be thrown if an input is invalid. By setting it _false_ exceptions can also be deactivated for single validations;
 
@@ -91,20 +96,20 @@ $bio->sanitize('stripTags', function( $val ) { return substr( $val, 0, 30 ); }, 
 
 Let's say all inputs have to be required fields, every field should be trimmed and unneccesary whitespaces should be removed and an exception should be thrown if an input is invalid:
 ```PHP
-Validator\GlobalSetup::setValidate(['required']);
-Validator\GlobalSetup::setSanitize('trim', 'stripMultipleWhitespaces');
-Validator\GlobalSetup::alwaysThrow(true);
+GlobalSetup::setValidate(['required']);
+GlobalSetup::setSanitize('trim', 'stripMultipleWhitespaces');
+GlobalSetup::alwaysThrow(true);
 ```
 
 ... except for birthday:
 ```PHP
-$birthday = Validator\Value::post( 'birthday' )->validate(['required' => false, 'date' => 'mm\/dd\/yyyy']);
+$birthday = In::post( 'birthday' )->validate(['required' => false, 'date' => 'mm\/dd\/yyyy']);
 ```
 
 I want to know which values are valid and which are invalid:
 ```PHP
-Validator\GlobalValues::getAllValids();   // Array with all valid values
-Validator\GlobalValues::getAllInvalids(); // Array with all invalid values
+GlobalValues::getAllValids();   // Array with all valid values
+GlobalValues::getAllInvalids(); // Array with all invalid values
 ```
 
 ### All available sanitizers
