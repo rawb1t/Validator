@@ -48,7 +48,8 @@ $email = Validator\Value::post( 'email' )->validate(['email']);
 $password = Validator\Value::post( 'password' )->validate(['min' => 8]);
 $gender = Validator\Value::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
 $accept_tos = Validator\Value::post( 'accept_tos' )->validate(['bool']);
-$pies = Validator\Value::post( 'pies' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
+$pies = Validator\Value::post( 'pies' )->validate(['inArray' => 'Cream']);
+$pies = Validator\Value::post( 'drink' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
 $captcha = Validator\Value::post( 'captcha' )->validate(['numbers', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
 $bio = Validator\Value::post( 'bio' );
 ```
@@ -56,7 +57,7 @@ $bio = Validator\Value::post( 'bio' );
 How to check what's valid and what's not?
 ```PHP
 $name->isValid();     // Returns true, because "John Doe" has less than 100 chars
-$password->isValid(); // Returns false, because "123456" is too short
+$pies->isValid();     // Returns false, because John refused to choose the creampie
 ```
 
 What other informations does Validator provide?
