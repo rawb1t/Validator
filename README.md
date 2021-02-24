@@ -33,7 +33,7 @@ $_POST['pies'][] = "Chocolate";
 $_POST['drink'][] = "Coke";
 $_POST['drink'][] = "Water";
 $_POST['drink'][] = "Milk";
-$_POST['captcha'] = 15;
+$_POST['captcha'] = "15";
 $_POST['bio'] = "Hello, I am John.
 
 <b>I love ambiguous allusions.</b>";
@@ -89,7 +89,7 @@ $bio->sanitize('stripTags', function( $val ) { return substr( $val, 0, 30 ); }, 
 
 Let's say all inputs have to be required fields:
 ```PHP
-Validator\GlobalSetup::setValidate('required');
+Validator\GlobalSetup::setValidate(['required']);
 ```
 
 I want to know which values are valid and which are invalid:
@@ -156,3 +156,13 @@ function( $val )
 - **match** (array, string) checks if a single value or all values of an array matching a given pattern (via parameter)
 - **inArray** (array) checks if the parameter is within an array
 - **notInArray** (array) checks if the parameter is not within an array
+
+##### Custom sanitizers
+(musst return a bool val)
+```PHP
+// $val contains the value of the Validator
+function( $val )
+{
+  return strlen( $val ) == 5;
+}
+```
