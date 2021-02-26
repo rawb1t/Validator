@@ -137,7 +137,6 @@ GlobalValues::getAllInvalids(); // Array with all invalid values
 - **break** (like nl2br() without XHTML syntax)
 - **int** (like filter_var() with FILTER_SANITIZE_NUMBER_INT)
 - **float** (like filter_var() with FILTER_SANITIZE_NUMBER_FLOAT)
-- **bool** (like boolval())
 - **email** (like filter_var() with FILTER_SANITIZE_EMAIL)
 - **url** (like filter_var() with FILTER_SANITIZE_URL)
 
