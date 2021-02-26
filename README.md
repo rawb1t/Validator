@@ -74,6 +74,7 @@ $name->isEmpty();     // Returns true, if there's no value
 $name->getLength();   // Returns the length of a value as an Integer
 $name->getErrors();   // Get a list of errors that occured due to the validation
 $name->hasError('maxlength');   // Checks of the maxLength validator throw an Error
+$name->hasMultiple(); // Returns true, if the value is an array
 ```
 
 How to get the value?
@@ -136,6 +137,7 @@ GlobalValues::getAllInvalids(); // Array with all invalid values
 - **break** (like nl2br() without XHTML syntax)
 - **int** (like filter_var() with FILTER_SANITIZE_NUMBER_INT)
 - **float** (like filter_var() with FILTER_SANITIZE_NUMBER_FLOAT)
+- **bool** (like boolval())
 - **email** (like filter_var() with FILTER_SANITIZE_EMAIL)
 - **url** (like filter_var() with FILTER_SANITIZE_URL)
 
@@ -154,6 +156,8 @@ function( $val )
 - **unequal** (number, string, array) if parameter is an array: checks if arrays don't contain the same elements otherwise compares simple variables if they are different
 - **unequalKey** (array) same as _unequal_ but only with arrays. The keys will be compared
 - **required** (number, string, array) checks if an array contains at least one element or a single variable a value with at least one character
+- **single** checks if the value is not an array
+- **multiple** checks if the value is an array
 - **minLength** (string) checks if an string has a minimum length
 - **maxLength** (string) checks if an string has a maximum length
 - **min** (number, array) checks if the amount of elements of an array or a number is bigger than the given parameter
