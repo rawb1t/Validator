@@ -28,7 +28,6 @@ $_POST['password'] = "123456";
 $_POST['gender'] = "male";
 $_POST['accept_tos'] = "true";
 $_POST['pies'][] = "Apple";
-$_POST['pies'][] = "Cream";
 $_POST['pies'][] = "Chocolate";
 $_POST['drink'][] = "Coke";
 $_POST['drink'][] = "Water";
@@ -71,7 +70,7 @@ From::cookie();   // $_COOKIE
 From::session();  // $_SESSION
 From::file();     // $_FILES
 ```
-The first parameter has to be the field's name as a string ( $\_POST\['username'\] becomes From::post('username') ). The second parameter is a boolean to ignore the global sanitizers and validators for this single input by setting the parameter true. You can deactive it afterwards with setIgnoreGlobal() as a chained method.
+The first parameter has to be the field's name as a string ( $\_POST\['username'\] becomes From::post('username') ).
 
 How to check what's valid and what's not?
 ```PHP
@@ -117,6 +116,7 @@ GlobalSetup::setValidate(['required']);
 GlobalSetup::setSanitize('trim', 'stripMultipleWhitespaces');
 GlobalSetup::alwaysThrow(true);
 ```
+To ignore global settings for specific inputs you can use ignoreGlobals(true). Every call of the sanitize() or validate() function after this will ignore the global settings.
 
 ... except for birthday:
 ```PHP
@@ -129,6 +129,16 @@ GlobalValues::getAllValids();   // Array with all valid values
 GlobalValues::getAllInvalids(); // Array with all invalid values
 GlobalValues::getAllErrors();   // Array with all triggered errors
 GlobalValues::getResult('name');// Returns true, if the value is valid, returns an Array with the value and the error type if value is invalid
+```
+
+There is the possibility to sanitize or validate values via closures. If the value is an array every single element will go trough the closure. If you set the provideArray(true) function, the closure will receive the whole array instead of every single element. Usually all of this conditions has to be true. If you want to check if at least a single condition is true set oneMustMatch(true).
+
+**Example:**
+
+```PHP
+$pies->provideArray(true)->validate([function( $val ) { return true; }]); // $val will contain an array of all selected pies. Otherwise the $val variable would contain every single element of $_POST['pies'].
+
+$pies->oneMustMatch(true)->validate([function( $val ) { return $val == "Apple"; }]); // This would be valid because the user at least picked the Applepie.
 ```
 
 ### All available sanitizers
