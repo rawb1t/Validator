@@ -141,6 +141,12 @@ $pies->provideArray(true)->validate([function( $val ) { return true; }]); // $va
 $pies->oneMustMatch(true)->validate([function( $val ) { return $val == "Apple"; }]); // This would be valid because the user at least picked the Applepie.
 ```
 
+Let's make every second entry uppercase
+```PHP
+$i = 0;
+$drinks = From::post( 'drinks' )->s(function( $val ) use ( &$i ) { $i++; return ( $i % 2 == 0 ) ? strtoupper($val) : $val; });
+```
+
 ### All available sanitizers
 
 - **trim** (like trim())
