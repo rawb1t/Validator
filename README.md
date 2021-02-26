@@ -74,7 +74,7 @@ $name->isEmpty();     // Returns true, if there's no value
 $name->getLength();   // Returns the length of a value as an Integer
 $name->getErrors();   // Get a list of errors that occured due to the validation
 $name->hasError('maxlength');   // Checks of the maxLength validator throw an Error
-$name->hasMultiple(); // Returns true, if the value is an array
+$name->isMultiple(); // Returns true, if the value is an array
 ```
 
 How to get the value?
