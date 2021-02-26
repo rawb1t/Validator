@@ -60,7 +60,7 @@ $pies = From::post( 'drink' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
 $captcha = From::post( 'captcha' )->validate(['number', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
 $bio = From::post( 'bio' );
 ```
-Hint: Setting the second parameter of the validate() function _true_ an exception will be thrown if an input is invalid. By setting it _false_ exceptions can also be deactivated for single validations;
+Hint: Setting the second parameter of the validate() function _true_ an exception will be thrown if an input is invalid. By setting it _false_ exceptions can also be deactivated for single validations. You can also use the shortcuts v() for validate() and s() for sanitize().
 
 How to check what's valid and what's not?
 ```PHP
