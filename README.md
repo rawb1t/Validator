@@ -116,6 +116,8 @@ I want to know which values are valid and which are invalid:
 ```PHP
 GlobalValues::getAllValids();   // Array with all valid values
 GlobalValues::getAllInvalids(); // Array with all invalid values
+GlobalValues::getAllErrors();   // Array with all triggered errors
+GlobalValues::getResult('name');// Returns true, if the value is valid, returns an Array with the value and the error type if value is invalid
 ```
 
 ### All available sanitizers
