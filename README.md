@@ -62,6 +62,17 @@ $bio = From::post( 'bio' );
 ```
 Hint: Setting the second parameter of the validate() function _true_ an exception will be thrown if an input is invalid. By setting it _false_ exceptions can also be deactivated for single validations. You can also use the shortcuts v() for validate() and s() for sanitize().
 
+There are different methods to collect user inputs:
+```PHP
+From::post();     // $_POST
+From::get();      // $_GET
+From::required(); // $_REQUEST
+From::cookie();   // $_COOKIE
+From::session();  // $_SESSION
+From::file();     // $_FILES
+```
+The first parameter has to be the field's name as a string ( $\_POST\['username'\] becomes From::post('username') ). The second parameter is a boolean to ignore the global sanitizers and validators for this single input by setting the parameter true. You can deactive it afterwards with setIgnoreGlobal() as a chained method.
+
 How to check what's valid and what's not?
 ```PHP
 $name->isValid();     // Returns true, because "John Doe" has less than 100 chars
