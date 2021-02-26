@@ -90,7 +90,7 @@ $name->isMultiple(); // Returns true, if the value is an array
 How to get the value?
 ```PHP
 echo $name; // "John Doe"
-echo $name->get(); // "John Doe" (mixed)
+echo $name->value(); // "John Doe" (mixed)
 echo $captcha->asInt(); // 15 (Integer)
 echo $accept_tos->asBool(); // true (Boolean)
 echo $name->asString(); // "John Doe" (String)
