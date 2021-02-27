@@ -314,7 +314,7 @@ class FileValidator extends From
 	protected function __construct( array $file, string $name )
 	{
 		$this->name = $name;
-		$count = count( $file );
+		/*$count = count( $file );
 
 		for( $i = 0; $i < $count; $i++ )
 		{
@@ -323,7 +323,7 @@ class FileValidator extends From
 				$this->upload_errors[] = $file[$i];
 				unset($file[$i]);
 			}
-		}
+		}*/
 
 		$this->file = array_filter( $file );
 	}
@@ -595,6 +595,14 @@ class FileValidator extends From
 		{
 			$error = null;
 
+			$is_valid = $this->upload_error();
+
+			if( !$is_valid )
+			{
+				$error = 'uploaderror';
+				break;
+			}
+
 			if( parent::is_closure( $f ) )
 			{
 				if( $this->provide_array )
@@ -685,6 +693,20 @@ class FileValidator extends From
 		return $this;
 	}
 
+	private function upload_error()
+	{
+		foreach( $this->file as $f )
+		{
+			if( $f['error'] != UPLOAD_ERR_OK )
+			{
+				$this->upload_errors[] = $f;
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	private function v_size( $max_size )
 	{
 		if( empty( $this->file ) )
@@ -710,6 +732,32 @@ class FileValidator extends From
 		}
 
 		return true;
+	}
+
+	private function v_fullSize( $max_size )
+	{
+		if( empty( $this->file ) )
+		{
+			return true;
+		}
+
+		if( \is_int( $max_size ) )
+		{
+			$max_size = intval( $max_size );
+		}
+		elseif( $max_size === false )
+		{
+			return true;
+		}
+
+		$fullsize = 0;
+
+		foreach( $this->file as $f )
+		{
+			$fullsize += intval( $f['size'] );
+		}
+
+		return $fullsize <= $max_size;
 	}
 
 	private function v_type( $types )
