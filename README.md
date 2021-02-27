@@ -248,3 +248,8 @@ function( $val )
   return strlen( $val ) == 5;
 }
 ```
+##### Validators for files
+- **maxFiles** checks if the number of files is less then the given parameter
+- **size** checks if the filesize of every single file is less then the given parameter
+- **type** checks if the filetype of every single file matches the provides filetypes given in the parameter or if it matches an universal mimetype like image/\*, video/\*, ...
+- **extension** checks if the file extension of every single file matches the provided file extensions given in the parameter
