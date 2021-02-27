@@ -1,14 +1,4 @@
 <?php
-/**
- * XValidator
- * Created by rawb1t, 2021
- * 
- * Validate and sanitize user input and other variables.
- * 
- * ToDo: File Validation
- * Checken, ob bestimmte Elemente in den _POST und _GET Arrays vorhanden sind (!empty($_POST[]))
- * 
- */
 namespace XValidator;
 
 class Has
@@ -150,6 +140,14 @@ class GlobalValues extends GlobalSetup
 	private static $invalid_values = [];
 	private static $all_errors = [];
 
+	protected static function putValidFile( string $name, int $i, $value ):void
+	{
+		if( !empty( $value ) )
+		{
+			self::$valid_values[$name][$i] = $value;
+		}
+	}
+
 	protected static function putValid( string $name, $value ):void
 	{
 		if( !empty( $value ) )
@@ -168,6 +166,14 @@ class GlobalValues extends GlobalSetup
 		return self::$valid_values;
 	}
 
+	protected static function putInvalidFile( string $name, int $i, $value ):void
+	{
+		if( !empty( $value ) )
+		{
+			self::$invalid_values[$name][$i] = $value;
+		}
+	}
+
 	protected static function putInvalid( string $name, $value ):void
 	{
 		if( !empty( $value ) )
@@ -184,6 +190,14 @@ class GlobalValues extends GlobalSetup
 	public static function getAllInvalids():array
 	{
 		return self::$invalid_values;
+	}
+
+	public static function putErrorFile( string $error, string $name, int $i )
+	{
+		if( !empty( $error ) )
+		{
+			self::$all_errors[$name][$i] = $error;
+		}
 	}
 
 	public static function putError( string $error, string $name )
@@ -248,12 +262,13 @@ class From extends GlobalValues
 		return new FileValidator( $files, $name );
 	}
 
-	private static function rearrange_files( ?array $file_post )
+	public static function rearrange_files( ?array $file_post )
 	{
-		$file_ary = array();
+		$files = [];
 
 		if( \is_array( $file_post['name'] ) )
 		{
+			$file_ary = [];
 			$file_count = count( $file_post['name'] );
 			$file_keys = array_keys( $file_post );
 		
@@ -264,13 +279,18 @@ class From extends GlobalValues
 					$file_ary[$i][$key] = $file_post[$key][$i];
 				}
 			}
+
+			foreach( $file_ary as $file )
+			{
+				$files[] = new File( $file );
+			}
 		}
 		else
 		{
-			return !\is_null( $file_post ) ? [ $file_post ] : [];
+			return !\is_null( $file_post ) ? [ new File( $file_post ) ] : [];
 		}
 	
-		return array_filter( $file_ary );
+		return array_filter( $files );
 	}
 
 	protected static function fix_validation_flags( array $flags ):array
@@ -303,201 +323,43 @@ class From extends GlobalValues
 class FileValidator extends From
 {
 	private $name = null;
-	private $file = null;
-	private $is_valid = false;
+	private $files = null;
 	private $ignore_global = false;
 	private $provide_array = false;
 	private $one_must_match = false;
-	private $upload_errors = [];
+	private $valid_files = [];
+	private $invalid_files = [];
 	private $errors = [];
 
-	protected function __construct( array $file, string $name )
+	protected function __construct( array $files, string $name )
 	{
 		$this->name = $name;
-		/*$count = count( $file );
-
-		for( $i = 0; $i < $count; $i++ )
-		{
-			if( $file[$i]['error'] != UPLOAD_ERR_OK )
-			{
-				$this->upload_errors[] = $file[$i];
-				unset($file[$i]);
-			}
-		}*/
-
-		$this->file = array_filter( $file );
+		$this->files = array_filter( $files );
 	}
 
 	public function isEmpty():bool
 	{
-		return empty( $this->file );
-	}
-
-	public function isValid():bool
-	{
-		return $this->is_valid;
+		return empty( $this->files );
 	}
 
 	public function isMultiple():bool
 	{
-		return count( $this->file ) > 1;
+		return count( $this->files ) > 1;
 	}
 
-	public function getInvalidFiles():array
+	public function isValid():bool
 	{
-		return $this->upload_errors;
+		return !empty( $this->valid_files );
 	}
 
-	public function getName( ?int $index = null )
+	public function getValidFiles()
 	{
-		if( empty( $this->file ) )
-		{
-			return null;
-		}
-		elseif( count( $this->file ) == 1 )
-		{
-			return $this->file[0]['name'];
-		}
-		elseif( !\is_null( $index ) )
-		{
-			if( !isset( $this->file[$index] ) )
-			{
-				throw new ValidationException("Array index {$index} does not exist.");
-			}
-
-			return $this->file[$index]['name'];
-		}
-		else
-		{
-			$names = [];
-
-			foreach( $this->file as $f )
-			{
-				$names[] = $f['name'];
-			}
-
-			return $names;
-		}
+		return count( $this->valid_files ) == 1 ? $this->valid_files[0] : $this->valid_files;
 	}
 
-	public function getSize( ?int $index = null ):int
+	public function getInvalidFiles()
 	{
-		if( !\is_null( $index ) )
-		{
-			if( !isset( $this->file[$index] ) )
-			{
-				throw new ValidationException("Array index {$index} does not exist.");
-			}
-
-			return intval( $this->file[$index]['size'] );
-		}
-		else
-		{
-			$size = 0;
-
-			foreach( $this->file as $f )
-			{
-				$size += intval( $f['size'] );
-			}
-
-			return $size;
-		}
-	}
-
-	public function getType( ?int $index = null )
-	{
-		if( empty( $this->file ) )
-		{
-			return null;
-		}
-		elseif( count( $this->file ) == 1 )
-		{
-			return $this->file[0]['type'];
-		}
-		elseif( !\is_null( $index ) )
-		{
-			if( !isset( $this->file[$index] ) )
-			{
-				throw new ValidationException("Array index {$index} does not exist.");
-			}
-
-			return $this->file[$index]['type'];
-		}
-		else
-		{
-			$types = [];
-
-			foreach( $this->file as $f )
-			{
-				$types[] = $f['type'];
-			}
-
-			return $types;
-		}
-	}
-
-	public function getTempName( ?int $index = null )
-	{
-		if( empty( $this->file ) )
-		{
-			return null;
-		}
-		elseif( count( $this->file ) == 1 )
-		{
-			return $this->file[0]['tmp_name'];
-		}
-		elseif( !\is_null( $index ) )
-		{
-			if( !isset( $this->file[$index] ) )
-			{
-				throw new ValidationException("Array index {$index} does not exist.");
-			}
-
-			return $this->file[$index]['tmp_name'];
-		}
-		else
-		{
-			$tmp_names = [];
-
-			foreach( $this->file as $f )
-			{
-				$tmp_names[] = $f['tmp_name'];
-			}
-
-			return $tmp_names;
-		}
-	}
-
-	public function getFileError( ?int $index = null )
-	{
-		if( empty( $this->file ) )
-		{
-			return null;
-		}
-		elseif( count( $this->file ) == 1 )
-		{
-			return $this->file[0]['error'];
-		}
-		elseif( !\is_null( $index ) )
-		{
-			if( !isset( $this->file[$index] ) )
-			{
-				throw new ValidationException("Array index {$index} does not exist.");
-			}
-
-			return $this->file[$index]['error'];
-		}
-		else
-		{
-			$errors = [];
-
-			foreach( $this->file as $f )
-			{
-				$errors[] = $f['error'];
-			}
-
-			return $errors;
-		}
+		return count( $this->invalid_files ) == 1 ? $this->invalid_files[0] : $this->invalid_files;
 	}
 
 	public function hasError( string $validator ):bool 
@@ -510,43 +372,45 @@ class FileValidator extends From
 		return $this->errors;
 	}
 
-	public function setIgnoreGlobal( $ignore_global ):FileValidator
+	public function setIgnoreGlobal( bool $ignore_global = true ):FileValidator
 	{
 		$this->ignore_global = $ignore_global;
 		return $this;
 	}
 
-	public function provideArray( $provide_array ):FileValidator
+	public function provideArray( bool $provide_array = true ):FileValidator
 	{
 		$this->provide_array = $provide_array;
 		return $this;
 	}
 
-	public function oneMustMatch( $one_must_match ):FileValidator
+	public function oneMustMatch( bool $one_must_match = true ):FileValidator
 	{
 		$this->one_must_match = $one_must_match;
 		return $this;
 	}
 
-	public function upload( string $path, ?\Closure $cl = null ):array
+	public function upload( string $path, ?\Closure $cl = null ):bool
 	{
-		$uploads = [];
+		$all_uploaded = true;
 
-		foreach( $this->file as $f )
+		foreach( $this->valid_files as $file )
 		{
-			$name = $f['name'];
-
 			if( !\is_null( $cl ) && parent::is_closure( $cl ) )
 			{
-				$file_name = pathinfo($f['name'], PATHINFO_FILENAME );
-				$file_ext = pathinfo($f['name'], PATHINFO_EXTENSION );
-				$name = $cl( $file_name, $file_ext );
+				$name = $cl( $file->getName(), $file->getExtension() );
 			}
 
-			$uploads[$f['name']] = \move_uploaded_file( $f['tmp_name'], $path . $name );
+			$uploaded = \move_uploaded_file( $file->getTempName(), $path . $name );
+			$file->setUploaded( $uploaded );
+
+			if( !$uploaded )
+			{
+				$all_uploaded = false;
+			}
 		}
 
-		return $uploads;
+		return $all_uploaded;
 	}
 
 	public function v( ?array $validation_flags = null, ?bool $throw = null ):FileValidator
@@ -556,7 +420,6 @@ class FileValidator extends From
 
 	public function validate( ?array $validation_flags = null, ?bool $throw = null ):FileValidator
 	{
-		$is_valid = true;
 		$use_exceptions = parent::$use_exceptions;
 
 		if( !\is_null( $throw ) )
@@ -591,56 +454,35 @@ class FileValidator extends From
 
 		$validation_flags = parent::fix_validation_flags( $validation_flags );
 
-		foreach( $validation_flags as $flag => $f )
+		foreach( $this->files as $i => $file )
 		{
 			$error = null;
-
-			$is_valid = $this->upload_error();
+			$is_valid = $this->upload_error( $file );
 
 			if( !$is_valid )
 			{
 				$error = 'uploaderror';
-				break;
 			}
 
-			if( parent::is_closure( $f ) )
+			foreach( $validation_flags as $flag => $f )
 			{
-				if( $this->provide_array )
+				if( parent::is_closure( $f ) )
 				{
-					$is_valid = boolval( $f( $this->file ) );
-
-					if( !$is_valid )
+					if( $this->provide_array )
 					{
-						$error = "custom-{$flag}";
-						break;
-					}
-				}
-				else
-				{
-					if( $this->one_must_match )
-					{
-						$new_valid = false;
-						foreach( $this->file as $fi )
-						{
-							if( boolval( $f( $fi ) ) )
-							{
-								$new_valid = true;
-								break;
-							}
-						}
+						$is_valid = boolval( $f( $this->files ) );
 
-						if( !$new_valid )
+						if( !$is_valid )
 						{
 							$error = "custom-{$flag}";
+							break;
 						}
-
-						$is_valid = $new_valid;
 					}
 					else
 					{
-						foreach( $this->file as $fi )
+						if( $this->one_must_match )
 						{
-							$is_valid = boolval( $f( $fi ) );
+							$is_valid = boolval( $f( $file ) );
 
 							if( !$is_valid )
 							{
@@ -648,68 +490,103 @@ class FileValidator extends From
 								break;
 							}
 						}
+						else
+						{
+							$new_valid = true;
+
+							foreach( $this->files as $fi )
+							{
+								$new_valid = boolval( $f( $fi ) );
+
+								if( !$new_valid )
+								{
+									$error = "custom-{$flag}";
+									break;
+								}
+							}
+
+							$is_valid = $new_valid;
+						}
 					}
 				}
+				else
+				{
+					$method = 'v_' . $flag;
+	
+					if( method_exists( $this, $method ) )
+					{
+						$is_valid = call_user_func_array([ $this, $method ], [ $file, $f ]);
+	
+						if( !$is_valid )
+						{
+							$error = strtolower( $flag );
+							break;
+						}
+					}
+				}
+			}
+
+			$file->setFileValid( $is_valid );
+
+			if( !\is_null( $error ) )
+			{
+				$this->errors[] = $error;
+				parent::putErrorFile( $error, $this->name, $i );
+			}
+
+			if( !$is_valid && $use_exceptions )
+			{
+				throw new InputException( $error, $this->name . "{$i}", $file );
+			}
+	
+			if( $is_valid )
+			{
+				$this->valid_files[] = $file;
+				parent::putValidFile( $this->name, $i, $file );
 			}
 			else
 			{
-				$method = 'v_' . $flag;
-
-				if( method_exists( $this, $method ) )
-				{
-					$is_valid = call_user_func_array([ $this, $method ], [ $f ]);
-
-					if( !$is_valid )
-					{
-						$error = strtolower( $flag );
-						break;
-					}
-				}
+				$this->invalid_files[] = $file;
+				parent::putInvalidFile( $this->name, $i, $file );
 			}
 		}
-
-		if( !\is_null( $error ) )
-		{
-			$this->errors[] = $error;
-			parent::putError( $error, $this->name );
-		}
-
-		if( !$is_valid && $use_exceptions )
-		{
-			throw new InputException( $error, $this->name, $this->file );
-		}
-
-		if( $is_valid )
-		{
-			parent::putValid( $this->name, $this->file );
-		}
-		else
-		{
-			parent::putInvalid( $this->name, $this->file );
-		}
-
-		$this->is_valid = $is_valid;
 
 		return $this;
 	}
 
-	private function upload_error()
+	private function upload_error( File $file )
 	{
-		foreach( $this->file as $f )
+		if( $file->getUploadError() != UPLOAD_ERR_OK )
 		{
-			if( $f['error'] != UPLOAD_ERR_OK )
-			{
-				$this->upload_errors[] = $f;
-				return false;
-			}
+			$this->upload_errors[] = $file;
+			return false;
 		}
 
 		return true;
 	}
 
-	private function v_size( $max_size )
+	private function v_maxFiles( File $file, $max_files )
 	{
-		if( empty( $this->file ) )
+		if( empty( $this->files ) )
+		{
+			return true;
+		}
+
+		if( \is_int( $max_files ) )
+		{
+			$max_files = intval( $max_files );
+		}
+		elseif( $max_files === false )
+		{
+			return true;
+		}
+
+		return count( $this->files ) <= $max_files;
+	}
+
+	private function v_size( File $file, $max_size )
+	{
+		if( empty( $this->files ) )
 		{
 			return true;
 		}
@@ -723,46 +600,12 @@ class FileValidator extends From
 			return true;
 		}
 
-		foreach( $this->file as $f )
-		{
-			if( intval( $f['size'] ) > $max_size )
-			{
-				return false;
-			}
-		}
-
-		return true;
+		return $file->getSize() <= $max_size;
 	}
 
-	private function v_fullSize( $max_size )
+	private function v_type( File $file, $types )
 	{
-		if( empty( $this->file ) )
-		{
-			return true;
-		}
-
-		if( \is_int( $max_size ) )
-		{
-			$max_size = intval( $max_size );
-		}
-		elseif( $max_size === false )
-		{
-			return true;
-		}
-
-		$fullsize = 0;
-
-		foreach( $this->file as $f )
-		{
-			$fullsize += intval( $f['size'] );
-		}
-
-		return $fullsize <= $max_size;
-	}
-
-	private function v_type( $types )
-	{
-		if( empty( $this->file ) )
+		if( empty( $this->files ) )
 		{
 			return true;
 		}
@@ -776,20 +619,17 @@ class FileValidator extends From
 			return true;
 		}
 
-		foreach( $this->file as $f )
+		if( !\in_array( $file->getType(), $types ) && !\in_array( $file->getUniversalType(), $types ) )
 		{
-			if( !\in_array( $f['type'], $types ) )
-			{
-				return false;
-			}
+			return false;
 		}
 
 		return true;
 	}
 
-	private function v_ext( $ext )
+	private function v_extension( File $file, $ext )
 	{
-		if( empty( $this->file ) )
+		if( empty( $this->files ) )
 		{
 			return true;
 		}
@@ -803,14 +643,9 @@ class FileValidator extends From
 			return true;
 		}
 
-		foreach( $this->file as $f )
+		if( !\in_array( $file->getExtension(), $ext ) )
 		{
-			$ex = pathinfo($f['name'], PATHINFO_EXTENSION );
-
-			if( !\in_array( $ex, $ext ) )
-			{
-				return false;
-			}
+			return false;
 		}
 
 		return true;
@@ -863,19 +698,19 @@ class Validator extends From
 		return $this->errors;
 	}
 
-	public function ignoreGlobals( $ignore_global ):Validator
+	public function ignoreGlobals( bool $ignore_global = true ):Validator
 	{
 		$this->ignore_global = $ignore_global;
 		return $this;
 	}
 
-	public function provideArray( $provide_array ):Validator
+	public function provideArray( bool $provide_array = true ):Validator
 	{
 		$this->provide_array = $provide_array;
 		return $this;
 	}
 
-	public function oneMustMatch( $one_must_match ):Validator
+	public function oneMustMatch( bool $one_must_match = true ):Validator
 	{
 		$this->one_must_match = $one_must_match;
 		return $this;
@@ -2494,6 +2329,98 @@ class Validator extends From
 	public function __toString()
 	{
 		return \is_array( $this->val ) ? \implode( ',', $this->val ) : ( !\is_null( $this->val ) ? strval( $this->val ) : '' );
+	}
+}
+
+class File extends FileValidator
+{
+	private $name = null;
+	private $basename = null;
+	private $extension = null;
+	private $universal_type = null;
+	private $type = null;
+	private $tmp_name = null;
+	private $error = null;
+	private $size = null;
+	private $is_valid = false;
+	private $is_uploaded = false;
+
+	public function __construct( array $file )
+	{
+		$this->name = $file['name'];		
+		$this->type = $file['type'];
+		$this->tmp_name = $file['tmp_name'];
+		$this->error = $file['error'];
+		$this->size = $file['size'];
+
+		$this->basename = pathinfo( $file['name'], PATHINFO_BASENAME );
+		$this->extension = pathinfo( $file['name'], PATHINFO_EXTENSION );
+		$this->universal_type = explode('/', $file['type'])[0] . '/*';
+	}
+
+	public function getName():?string
+	{
+		return $this->name;
+	}
+
+	public function getBasename():?string
+	{
+		return $this->basename;
+	}
+
+	public function getExtension():?string
+	{
+		return $this->extension;
+	}
+
+	public function getUniversalType():?string
+	{
+		return $this->universal_type;
+	}
+
+	public function getType():?string
+	{
+		return $this->type;
+	}
+
+	public function getTempName():?string
+	{
+		return $this->tmp_name;
+	}
+
+	public function getUploadError():int
+	{
+		return $this->error;
+	}
+
+	public function getSize():int
+	{
+		return $this->size;
+	}
+
+	public function isFileValid():bool 
+	{
+		return $this->is_valid;
+	}
+
+	protected function setFileValid( bool $is_valid ):void
+	{
+		$this->is_valid = $is_valid;
+	}
+
+	public function isUploaded():bool 
+	{
+		return $this->is_uploaded;
+	}
+
+	protected function setUploaded( bool $is_uploaded ):void
+	{
+		$this->is_uploaded = $is_uploaded;
+	}
+
+	public function __toString()
+	{
+		return "[File Name:{$this->name}, Size: {$this->size}, Type: {$this->type}, Error: {$this->error}]";
 	}
 }
 
