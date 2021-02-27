@@ -131,14 +131,14 @@ GlobalValues::getAllErrors();   // Array with all triggered errors
 GlobalValues::getResult('name');// Returns true, if the value is valid, returns an Array with the value and the error type if value is invalid
 ```
 
-There is the possibility to sanitize or validate values via closures. If the value is an array every single element will go trough the closure. If you set the provideArray(true) function, the closure will receive the whole array instead of every single element. Usually all of this conditions has to be true. If you want to check if at least a single condition is true set oneMustMatch(true).
+There is the possibility to sanitize or validate values via closures. If the value is an array every single element will go trough the closure. If you set the provideArray(true) function, the closure will receive the whole array instead of every single element. Usually all of this conditions has to be true. If you want to check if at least a single condition is true set oneMustMatch(true). If you leave the parameter empty is like setting true.
 
-**Example:**
+**Example**
 
 ```PHP
-$pies->provideArray(true)->validate([function( $val ) { return true; }]); // $val will contain an array of all selected pies. Otherwise the $val variable would contain every single element of $_POST['pies'].
+$pies->provideArray()->validate([function( $val ) { return true; }]); // $val will contain an array of all selected pies. Otherwise the $val variable would contain every single element of $_POST['pies'].
 
-$pies->oneMustMatch(true)->validate([function( $val ) { return $val == "Apple"; }]); // This would be valid because the user at least picked the Applepie.
+$pies->oneMustMatch()->validate([function( $val ) { return $val == "Apple"; }]); // This would be valid because the user at least picked the Applepie.
 ```
 
 Let's make every second entry uppercase
@@ -146,6 +146,32 @@ Let's make every second entry uppercase
 $i = 0;
 $drinks = From::post( 'drinks' )->s(function( $val ) use ( &$i ) { $i++; return ( $i % 2 == 0 ) ? strtoupper($val) : $val; });
 ```
+
+### Uploads
+
+You can also handle file uploads:
+```PHP
+// Only files with jpg or png as extension and image type of image/*. After that upload it to the given directory, and the size has to be less then 100.000 bytes.
+$upload = From::file( 'upload' )->validate(['size' => 100000, 'extension' => ['jpg','png'], 'type' => 'image/*'])->upload('/var/www/uploads/');
+
+// Only if at least one file matches the string "file.jpg"
+$upload2 = From::file( 'upload2' )->oneMustMatch()->validate([function( $file ) { return $file->getName() == "file.jpg": }]);
+```
+
+The following will return an array of multiple File Objects (if multiple files have been provided (<input type="file" name="upload[]" multiple>) or a single File Object.
+The file object provides multiple functions:
+
+```PHP
+$file->getName();       // Returns the complete filename
+$file->getBasename();   // Returns the filename without the extension (basename)
+$file->getExtension();  // Returns the file extension
+$file->getUniversalType(); // Returns the universal Mimetype (for example: image/*, video/*, application/*)
+$file->getType();       // Returns the mime type
+$file->getTempName();   // tmp_name of the file
+$file->getUploadError(); // Returns the error of an file
+$file->getSize();       // Returns size in bytes
+```
+
 
 ### All available sanitizers
 
@@ -189,8 +215,8 @@ function( $val )
 - **required** (number, string, array) checks if an array contains at least one element or a single variable a value with at least one character
 - **single** checks if the value is not an array
 - **multiple** checks if the value is an array
-- **minLength** (string) checks if an string has a minimum length
-- **maxLength** (string) checks if an string has a maximum length
+- **minLength** (string, array) checks if an string has a minimum length
+- **maxLength** (string, array) checks if an string has a maximum length
 - **min** (number, array) checks if the amount of elements of an array or a number is bigger than the given parameter
 - **min** (number, array) checks if the amount of elements of an array or a number is smaller than the given parameter
 - **email** (array, string) checks if a single value or all values of an array are a correct e-mail address
