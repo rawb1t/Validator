@@ -48,17 +48,17 @@ use XValidator\Has;
 
 $captcha_result = 15;
 
-$name = From::post( 'name' )->validate(['maxLength' => 100]);
-$username = From::post( 'username' )->validate(['alphanumericOnly']);
-$birthday = From::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
-$email = From::post( 'email' )->validate(['email', function( $val ) { return check_if_email_is_available( $val ); }]);
-$password = From::post( 'password' )->validate(['minLength' => 8, 'mustContainEverything']);
-$gender = From::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
+$name =       From::post( 'name' )->validate(['maxLength' => 100]);
+$username =   From::post( 'username' )->validate(['alphanumericOnly']);
+$birthday =   From::post( 'birthday' )->validate(['date' => 'mm\/dd\/yyyy']);
+$email =      From::post( 'email' )->validate(['email', function( $val ) { return check_if_email_is_available( $val ); }]);
+$password =   From::post( 'password' )->validate(['minLength' => 8, 'mustContainEverything']);
+$gender =     From::post( 'gender' )->validate(['inArray' => ['male', 'female']]);
 $accept_tos = From::post( 'accept_tos' )->validate(['bool']);
-$pies = From::post( 'pies' )->validate(['inArray' => 'Cream']);
-$pies = From::post( 'drink' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
-$captcha = From::post( 'captcha' )->validate(['number', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
-$bio = From::post( 'bio' );
+$pies =       From::post( 'pies' )->validate(['inArray' => 'Cream']);
+$pies =       From::post( 'drink' )->validate(['equal' => ['Coke', 'Water', 'Milk']]);
+$captcha =    From::post( 'captcha' )->validate(['number', function( $val ) use ( $captcha_result ) { return $val == $captcha_result; }]);
+$bio =        From::post( 'bio' );
 ```
 Hint: Setting the second parameter of the validate() function _true_ an exception will be thrown if an input is invalid. By setting it _false_ exceptions can also be deactivated for single validations. You can also use the shortcuts v() for validate() and s() for sanitize().
 
