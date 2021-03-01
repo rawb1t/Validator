@@ -1,4 +1,14 @@
 <?php
+/**
+ * XValidator
+ * Created by rawb1t, 2021
+ * 
+ * Validate and sanitize user input and other variables.
+ * 
+ * ToDo: File Validation
+ * Checken, ob bestimmte Elemente in den _POST und _GET Arrays vorhanden sind (!empty($_POST[]))
+ * 
+ */
 namespace XValidator;
 
 class Has
@@ -8,6 +18,11 @@ class Has
 		if( empty( $_POST ) )
 		{
 			return false;
+		}
+
+		if( empty( $data ) && !empty( $_POST ) )
+		{
+			return true;
 		}
 
 		foreach( $data as $d )
@@ -28,6 +43,11 @@ class Has
 			return false;
 		}
 
+		if( empty( $data ) && !empty( $_GET ) )
+		{
+			return true;
+		}
+
 		foreach( $data as $d )
 		{
 			if( !isset( $_GET[$d] ) )
@@ -44,6 +64,11 @@ class Has
 		if( empty( $_REQUEST ) )
 		{
 			return false;
+		}
+
+		if( empty( $data ) && !empty( $_REQUEST ) )
+		{
+			return true;
 		}
 
 		foreach( $data as $d )
@@ -64,6 +89,11 @@ class Has
 			return false;
 		}
 
+		if( empty( $data ) && !empty( $_COOKIE ) )
+		{
+			return true;
+		}
+
 		foreach( $data as $d )
 		{
 			if( !isset( $_COOKIE[$d] ) )
@@ -82,6 +112,11 @@ class Has
 			return false;
 		}
 
+		if( empty( $data ) && !empty( $_SESSION ) )
+		{
+			return true;
+		}
+
 		foreach( $data as $d )
 		{
 			if( !isset( $_SESSION[$d] ) )
@@ -98,6 +133,11 @@ class Has
 		if( empty( $_FILES ) )
 		{
 			return false;
+		}
+
+		if( empty( $data ) && !empty( $_FILES ) )
+		{
+			return true;
 		}
 
 		foreach( $data as $d )
