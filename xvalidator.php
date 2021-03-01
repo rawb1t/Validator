@@ -5,9 +5,6 @@
  * 
  * Validate and sanitize user input and other variables.
  * 
- * ToDo: File Validation
- * Checken, ob bestimmte Elemente in den _POST und _GET Arrays vorhanden sind (!empty($_POST[]))
- * 
  */
 namespace XValidator;
 
@@ -19,8 +16,7 @@ class Has
 		{
 			return false;
 		}
-
-		if( empty( $data ) && !empty( $_POST ) )
+		elseif( empty( $data ) )
 		{
 			return true;
 		}
@@ -42,8 +38,7 @@ class Has
 		{
 			return false;
 		}
-
-		if( empty( $data ) && !empty( $_GET ) )
+		elseif( empty( $data ) )
 		{
 			return true;
 		}
@@ -65,8 +60,7 @@ class Has
 		{
 			return false;
 		}
-
-		if( empty( $data ) && !empty( $_REQUEST ) )
+		elseif( empty( $data ) )
 		{
 			return true;
 		}
@@ -88,8 +82,7 @@ class Has
 		{
 			return false;
 		}
-
-		if( empty( $data ) && !empty( $_COOKIE ) )
+		elseif( empty( $data ) )
 		{
 			return true;
 		}
@@ -111,8 +104,7 @@ class Has
 		{
 			return false;
 		}
-
-		if( empty( $data ) && !empty( $_SESSION ) )
+		elseif( empty( $data ) )
 		{
 			return true;
 		}
@@ -134,8 +126,7 @@ class Has
 		{
 			return false;
 		}
-
-		if( empty( $data ) && !empty( $_FILES ) )
+		elseif( empty( $data ) )
 		{
 			return true;
 		}
