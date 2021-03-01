@@ -265,7 +265,7 @@ function( $val )
 - **inArray** (string, array) the comparison depends on the constellation: if the value to be validated is a string and the parameter is an array, its like in_array(value, parameter). If the value to validate is an array and the parameter is a string its also like in_array(parameter, value). If both, the value and the parameter are arrays in will be checked if at least on element of an value array is available in the parameter array.
 - **notInArray** (string, array) same as _inArray_ but vice versa. Checks if something is NOT in an array
 
-##### Custom sanitizers
+##### Custom validators
 (musst return a bool val)
 ```PHP
 // $val contains the value of the Validator
