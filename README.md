@@ -65,7 +65,7 @@ There are different methods to collect user inputs:
 ```PHP
 From::post();     // $_POST
 From::get();      // $_GET
-From::required(); // $_REQUEST
+From::request(); // $_REQUEST
 From::cookie();   // $_COOKIE
 From::session();  // $_SESSION
 From::file();     // $_FILES
@@ -116,12 +116,13 @@ GlobalSetup::setValidate(['required']);
 GlobalSetup::setSanitize('trim', 'stripMultipleWhitespaces');
 GlobalSetup::alwaysThrow(true);
 ```
-To ignore global settings for specific inputs you can use ignoreGlobals(true). Every call of the sanitize() or validate() function after this will ignore the global settings.
 
 ... except for birthday:
 ```PHP
 $birthday = From::post( 'birthday' )->sanitize()->validate(['required' => false, 'date' => 'mm\/dd\/yyyy']);
 ```
+
+To ignore global settings for specific inputs you can use ignoreGlobals(true). Every call of the sanitize() or validate() function after this will ignore the global settings.
 
 I want to know which values are valid and which are invalid:
 ```PHP
