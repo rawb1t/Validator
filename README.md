@@ -181,7 +181,7 @@ $upload2 = From::file( 'upload2' )->oneMustMatch()->validate([function( $file ) 
 An additional parameter can be added to upload() to change the file name, like:
 
 ```PHP
-$uplaod->upload('/var/www/uploads/', function( $filename, $extenstion ) { return md5($filename) . "." . $extension });
+$upload->upload('/var/www/uploads/', function( $filename, $extenstion ) { return md5($filename) . "." . $extension });
 ```
 
 The following will return an array of multiple File Objects (if multiple files have been provided (<input type="file" name="upload[]" multiple>) or a single File Object.
