@@ -44,6 +44,7 @@ use XValidator\GlobalSetup;
 use XValidator\GlobalValues;
 use XValidator\InputException;
 use XValidator\From;
+use XValidator\Has;
 
 $captcha_result = 15;
 
@@ -71,6 +72,24 @@ From::session();  // $_SESSION
 From::file();     // $_FILES
 ```
 The first parameter has to be the field's name as a string ( $\_POST\['username'\] becomes From::post('username') ).
+
+You can also check if a specific input is available at all:
+```PHP
+Has::post();     // $_POST
+Has::get();      // $_GET
+Has::request(); // $_REQUEST
+Has::cookie();   // $_COOKIE
+Has::session();  // $_SESSION
+Has::file();     // $_FILES
+```
+First parameter checks if the specific input is available, for exampe:
+
+```PHP
+Has::post('name');
+
+// Leaving the parameter empty will check if the global POST Array has been set at all:
+Has::post();
+``` 
 
 How to check what's valid and what's not?
 ```PHP
