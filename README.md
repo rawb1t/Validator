@@ -266,7 +266,7 @@ function( $val )
 - **notInArray** (string, array) same as _inArray_ but vice versa. Checks if something is NOT in an array
 
 ##### Custom validators
-(musst return a bool val)
+(must return a bool val)
 ```PHP
 // $val contains the value of the Validator
 function( $val )
