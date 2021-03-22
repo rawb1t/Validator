@@ -262,6 +262,19 @@ class GlobalValues extends GlobalSetup
 
 class From extends GlobalValues
 {
+	public static function raw( $val, $name ):Validator
+	{
+		return new Validator( $val, $name );
+	}
+
+	public static function json( $name ):Validator
+	{
+		$input = file_get_contents('php://input');
+		$_JSON = json_decode( $input );
+
+		return new Validator( $_JSON[$name], $name );
+	}
+
 	public static function post( $name ):Validator
 	{
 		return new Validator( $_POST[$name], $name );
