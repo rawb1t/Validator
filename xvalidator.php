@@ -269,7 +269,7 @@ class From extends GlobalValues
 
 	public static function json( $name ):Validator
 	{
-		$input = file_get_contents('php://input');
+		$input = file_get_contents( 'php://input' );
 		$_JSON = json_decode( $input, true );
 
 		return new Validator( $_JSON[$name], $name );
