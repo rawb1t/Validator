@@ -70,6 +70,8 @@ From::request(); // $_REQUEST
 From::cookie();   // $_COOKIE
 From::session();  // $_SESSION
 From::file();     // $_FILES
+From::json();     // JSON Object
+From::raw($val, $name);     // A custom variable. First parameter is the value, second a given name
 ```
 The first parameter has to be the field's name as a string ( $\_POST\['username'\] becomes From::post('username') ).
 
