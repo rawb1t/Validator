@@ -102,7 +102,7 @@ What other informations does Validator provide?
 $name->isEmpty();     // Returns true, if there's no value
 $name->getLength();   // Returns the length of a value or the count of elements if it's an array as an Integer
 $name->getErrors();   // Get a list of errors that occured due to the validation
-$name->hasError('maxLength');   // Checks if the maxLength validator throw an Error
+$name->hasError('maxLength');   // Checks if the maxLength validator threw an Error
 $name->isMultiple(); // Returns true, if the value is an array
 ```
 
