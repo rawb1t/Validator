@@ -261,7 +261,7 @@ function( $val )
 - **mustContainNumbers** (array, string) checks if a single value or all values of an array contain at least one digit
 - **mustContainSpecialchars** (array, string) checks if a single value or all values of an array contain at least one special char
 - **mustContainEverything** (array, string) combines _mustContainUppercase_, _mustContainLowercase_, _mustContainNumbers_ and _mustContainSpecialchars_
-- **match** (array, string) checks if a single value or all values of an array matching a given pattern (via parameter)
+- **match** (array, string) checks if a single value or all values of an array matching a given Regex pattern (via parameter)
 - **inArray** (string, array) the comparison depends on the constellation: if the value to be validated is a string and the parameter is an array, its like in_array(value, parameter). If the value to validate is an array and the parameter is a string its also like in_array(parameter, value). If both, the value and the parameter are arrays in will be checked if at least on element of an value array is available in the parameter array.
 - **notInArray** (string, array) same as _inArray_ but vice versa. Checks if something is NOT in an array
 
