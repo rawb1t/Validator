@@ -100,7 +100,7 @@ $pies->isValid();     // Returns false, because John refused to choose the cream
 What other informations does Validator provide?
 ```PHP
 $name->isEmpty();     // Returns true, if there's no value
-$name->getLength();   // Returns the length of a value as an Integer
+$name->getLength();   // Returns the length of a value or the count of elements if it's an array as an Integer
 $name->getErrors();   // Get a list of errors that occured due to the validation
 $name->hasError('maxlength');   // Checks of the maxLength validator throw an Error
 $name->isMultiple(); // Returns true, if the value is an array
